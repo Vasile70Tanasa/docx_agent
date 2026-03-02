@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+
+# Environment
+.env
+
+# Project specific caches
+cache/
+_legacy/cache/
+exercise.md
+
+# IDEs
+.vscode/
+.idea/
+.project
+.pydevproject
+.settings/
