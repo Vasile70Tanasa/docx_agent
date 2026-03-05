@@ -141,19 +141,24 @@ def _extract_label(
             return first_line, 'checkbox_option'
 
     # 4. Next paragraph as a label hint (non-checkbox fields only)
-    prefix_clean = _norm(RE_UND.sub(' ', RE_DOTS.sub(' ', RE_CHECKBOX.sub(' ', prefix or '')))).strip()
-    if next_text and _is_hint_para(next_text) and len(prefix_clean) < 25:
-        m2 = RE_ONLY_PAREN.match(_norm(next_text))
-        if m2:
-            t = _norm(m2.group(1)).strip(' .;,:')
-        else:
+    if next_text:
+        # PRIORITIZE: If the next paragraph is ONLY a bracketed hint (e.g. "(denumirea serviciilor)"),
+        # we take it as the label even if the prefix is long.
+        m_only = re.match(r'^\s*\(\s*([^\)]+)\s*\)\s*$', next_text.strip())
+        if m_only:
+            t = _norm(m_only.group(1)).strip(' .;,:')
+            if len(t) >= 2:
+                return t, 'next_para_hint'
+
+        # Fallback: only use next_para if prefix is short
+        if _norm(prefix or '') == '' or len(_norm(prefix)) < 25:
             m3 = RE_PARENS.search(_norm(next_text))
             if m3:
                 t = _norm(m3.group(1)).strip(' .;,:')
             else:
                 t = _norm(next_text).strip(' .;,:()_.')
-        if len(t) >= 2:
-            return t, 'next_para'
+            if len(t) >= 2:
+                return t, 'next_para'
 
     # 5. Last meaningful chunk of the text before the placeholder
     p = RE_UND.sub(' ', prefix or '')

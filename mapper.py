@@ -19,9 +19,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 try:
-    from openai import OpenAI
+    import anthropic
 except ImportError:
-    OpenAI = None
+    anthropic = None
 
 
 def _sha(s: str) -> str:
@@ -63,22 +63,33 @@ class _JsonCache:
         self._save()
 
 
-def _llm_map_chunk(client: Any, chunk: List[Dict], data: Dict[str, Any], model: str) -> Dict[str, Tuple[Optional[str], float, Optional[str]]]:
-    """Sends a single chunk of fields to the LLM to be mapped against json_keys."""
+def _llm_map_chunk(client: Any, chunk: List[Dict], data: Dict[str, Any], model: str) -> Dict[str, Tuple[Optional[str], float, Optional[str], Optional[str]]]:
+    """Sends a single chunk of fields to the LLM (Anthropic) to be mapped against json_keys."""
     
     # Build text representation of the chunk
     chunk_text = ""
     for ent in chunk:
         eid = ent['id']
         t_type = ent.get('field_type', 'TEXT')
-        ctx = (
-            (ent.get('ctx_prev_para', '') or '') + '\n' +
-            (ent.get('ctx_before', '') or '') + 
-            f" [[PLACEHOLDER_ID: {eid}]] " + 
-            (ent.get('ctx_after', '') or '') + '\n' +
-            (ent.get('ctx_next_para', '') or '')
-        ).strip()
-        chunk_text += f"---\nField Type: {t_type}\nContext:\n{ctx}\n\n"
+        
+        ctx_before = ent.get('ctx_before', '') or ''
+        ctx_after  = ent.get('ctx_after',  '') or ''
+        prev_p     = ent.get('ctx_prev_para', '') or ''
+        next_p     = ent.get('ctx_next_para', '') or ''
+        
+        # DYNAMIC CONTEXT PRESERVATION:
+        # Even if the line context is long, if adjacent paragraphs contain a hint '(',
+        # we MUST include them to avoid "context blindness".
+        ctx = ""
+        if '(' in prev_p or len(ctx_before) < 50:
+            ctx += prev_p + "\n"
+            
+        ctx += ctx_before + f" [[PLACEHOLDER_ID: {eid}]] " + ctx_after
+        
+        if '(' in next_p or len(ctx_after) < 50:
+            ctx += "\n" + next_p
+            
+        chunk_text += f"---\nField Type: {t_type}\nContext:\n{ctx.strip()}\n\n"
 
     payload = {
         "task": "You are a strict data entry mapping system. Read the provided text chunks, each containing a [[PLACEHOLDER_ID: ...]]. For each placeholder, select the EXACT matching JSON key from the 'available_data'.",
@@ -88,39 +99,61 @@ def _llm_map_chunk(client: Any, chunk: List[Dict], data: Dict[str, Any], model: 
             "3. CRITICAL: If multiple keys are valid (e.g. variants of the same concept), STRICTLY count the exact overlapping words between the JSON key and the immediate context ('ctx_before' and 'ctx_after') and ALWAYS choose the key with the highest literal word overlap.",
             "4. If the context surrounding the placeholder specifically asks for a part of the value (e.g., just the 'ziua/day' or 'luna/month' from a full date, or just one item from a list of partners), you MUST provide that exact partial substring (from the data value) in the 'extracted_value' field.",
             "5. If no partial extraction is needed, leave 'extracted_value' as null.",
-            "6. Return a JSON array: [{\"id\": \"<PLACEHOLDER_ID>\", \"selected_key\": \"<JSON_KEY>\" | null, \"extracted_value\": \"<SUBSTRING>\" | null, \"confidence\": 0.0-1.0}]"
+            "6. Return a JSON array: [{\"id\": \"<PLACEHOLDER_ID>\", \"selected_key\": \"<JSON_KEY>\" | null, \"reasoning\": \"<MATCHING_LOGIC>\", \"extracted_value\": \"<SUBSTRING>\" | null, \"confidence\": 0.0-1.0}]"
         ],
         "available_data": data,
         "document_chunk": chunk_text
     }
 
     try:
-        resp = client.chat.completions.create(
+        # Move system instructions into user prompt to avoid "multiple user roles" error
+        # which can happen if some proxies/versions mangle the system/user boundary.
+        system_instr = "You output ONLY valid JSON arrays. No markdown, no conversational text."
+        user_content = f"{system_instr}\n\nTask:\n{json.dumps(payload, ensure_ascii=False)}"
+
+        msg_list = [
+            {"role": "user", "content": user_content}
+        ]
+        
+        # Anthropic Message API call
+        resp = client.messages.create(
             model=model,
+            max_tokens=4096,
             temperature=0,
-            messages=[
-                {"role": "system", "content": "You output ONLY valid JSON arrays. No markdown, no conversational text."},
-                {"role": "user", "content": json.dumps(payload, ensure_ascii=False)}
-            ],
+            messages=msg_list,
         )
-        content = (resp.choices[0].message.content or "").strip()
-        content = re.sub(r"^```(?:json)?\s*", "", content)
-        content = re.sub(r"\s*```$", "", content).strip()
-        items = json.loads(content)
+        content = (resp.content[0].text or "").strip()
+        
+        # Robust JSON Array Extraction
+        try:
+            # First, clean markdown blocks if they exist
+            content = re.sub(r"^```(?:json)?\s*", "", content)
+            content = re.sub(r"\s*```$", "", content).strip()
+            
+            # Use regex to find the outermost [...] block
+            m = re.search(r"(\[[\s\S]*\])", content)
+            if m:
+                items = json.loads(m.group(1))
+            else:
+                items = json.loads(content)
+        except Exception as json_err:
+            print(f"LLM Mapping error (JSON parsing failed): {json_err}\nRaw Content: {content[:100]}...")
+            return {}
         
         result = {}
         for item in items:
             eid = item.get("id")
             sel = item.get("selected_key")
             ext = item.get("extracted_value")
+            reasoning = item.get("reasoning")
             conf = float(item.get("confidence", 0.0))
             if sel not in data:
                 sel = None
             if eid:
-                result[eid] = (sel, conf, ext)
+                result[eid] = (sel, conf, ext, reasoning)
         return result
     except Exception as e:
-        print(f"LLM Mapping error: {e}")
+        print(f"LLM Mapping error (Anthropic): {e}")
         return {}
 
 
@@ -130,18 +163,17 @@ def build_mapping(
     tables: List[Dict],
     data: Dict[str, Any],
     cache_path: str = 'cache/mapping_cache.json',
-    model: str = 'gpt-4o',
+    model: str = 'claude-3-7-sonnet-latest',
 ) -> Dict[str, Any]:
     
     json_keys = list(data.keys())
     cache = _JsonCache(cache_path)
 
-    if OpenAI is None:
-        raise RuntimeError("openai package not installed: pip install openai")
-    api_key = os.environ.get('OPENAI_API_KEY', '').strip()
+    if anthropic is None:
+        raise RuntimeError("anthropic package not installed: pip install anthropic")
+    api_key = os.environ.get('ANTHROPIC_API_KEY', '').strip()
     if not api_key:
-        raise RuntimeError("OPENAI_API_KEY environment variable is not set")
-    client = OpenAI(api_key=api_key)
+        raise RuntimeError("ANTHROPIC_API_KEY environment variable is not set")
 
     mapping: Dict[str, Any] = {}
     entities: List[Dict] = []
@@ -266,7 +298,7 @@ def build_mapping(
     entities = non_table_entities
 
     # 2. Process textual chunks using LLM
-    CHUNK_SIZE = 12
+    CHUNK_SIZE = 10
     for i in range(0, len(entities), CHUNK_SIZE):
         chunk = entities[i : i + CHUNK_SIZE]
         
@@ -282,19 +314,28 @@ def build_mapping(
                 to_process.append(ent)
                 
         if to_process:
+            client = anthropic.Anthropic(api_key=api_key)
             results = _llm_map_chunk(client, to_process, data, model)
             for ent in to_process:
                 eid = ent['id']
-                sel, conf, ext = results.get(eid, (None, 0.0, None))
+                sel, conf, ext, reasoning = results.get(eid, (None, 0.0, None, None))
                 
                 res_obj = {
                     'json_key': sel, 
                     'extracted_value': ext,
+                    'reasoning': reasoning,
                     'confidence': conf, 
                     'source': 'llm_v4',
                     'para_index': _para_index_from_location(ent.get('location', '')),
                     'start': ent.get('start', 0),
-                    'end': ent.get('end', 0)
+                    'end': ent.get('end', 0),
+                    'full_text': ent.get('full_text', ''),
+                    'label': ent.get('label', ''),
+                    'label_source': ent.get('label_source', ''),
+                    'ctx_before': ent.get('ctx_before', ''),
+                    'ctx_after': ent.get('ctx_after', ''),
+                    'ctx_prev_para': ent.get('ctx_prev_para', ''),
+                    'ctx_next_para': ent.get('ctx_next_para', '')
                 }
                 mapping[eid] = res_obj
                 
