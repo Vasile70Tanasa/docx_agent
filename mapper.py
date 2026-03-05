@@ -71,36 +71,94 @@ def _llm_map_chunk(client: Any, chunk: List[Dict], data: Dict[str, Any], model: 
     for ent in chunk:
         eid = ent['id']
         t_type = ent.get('field_type', 'TEXT')
-        
+
         ctx_before = ent.get('ctx_before', '') or ''
         ctx_after  = ent.get('ctx_after',  '') or ''
         prev_p     = ent.get('ctx_prev_para', '') or ''
         next_p     = ent.get('ctx_next_para', '') or ''
-        
+
         # DYNAMIC CONTEXT PRESERVATION:
         # Even if the line context is long, if adjacent paragraphs contain a hint '(',
         # we MUST include them to avoid "context blindness".
         ctx = ""
         if '(' in prev_p or len(ctx_before) < 50:
             ctx += prev_p + "\n"
-            
+
         ctx += ctx_before + f" [[PLACEHOLDER_ID: {eid}]] " + ctx_after
-        
+
         if '(' in next_p or len(ctx_after) < 50:
             ctx += "\n" + next_p
-            
+
         chunk_text += f"---\nField Type: {t_type}\nContext:\n{ctx.strip()}\n\n"
+
+    examples = [
+        {
+            "description": "Example 1 — Similar keys: disambiguate using full context",
+            "input": {
+                "context": "pentru suma de [[PLACEHOLDER]] lei,\n(suma in litere si in cifre)",
+                "available_keys": ["Suma (in litere si cifre)", "Suma de ... lei (in litere si cifre)"]
+            },
+            "output": [{
+                "id": "example_1",
+                "selected_key": "Suma de ... lei (in litere si cifre)",
+                "reasoning": "Context says 'pentru suma de ___ lei' — the structure 'suma de ... lei' matches exactly the key 'Suma de ... lei (in litere si cifre)', not the more generic 'Suma (in litere si cifre)'.",
+                "extracted_value": None,
+                "confidence": 0.95
+            }]
+        },
+        {
+            "description": "Example 2 — Paired fields on the same line (name + role)",
+            "input": {
+                "context": "[[PLACEHOLDER_A]], in calitate de [[PLACEHOLDER_B]], legal autorizat sa semnez",
+                "available_keys": ["Numele in clar al persoanei autorizate", "Functia persoanei imputernicite", "Reprezentat prin - nume si calitate"]
+            },
+            "output": [
+                {
+                    "id": "example_2a",
+                    "selected_key": "Reprezentat prin - nume si calitate",
+                    "reasoning": "Placeholder A asks for a name, B asks for a role. 'Reprezentat prin - nume si calitate' contains BOTH ('Ionescu Mihai, Administrator'). Extract only the name part.",
+                    "extracted_value": "Ionescu Mihai",
+                    "confidence": 0.95
+                },
+                {
+                    "id": "example_2b",
+                    "selected_key": "Reprezentat prin - nume si calitate",
+                    "reasoning": "Same reasoning — extract the role/quality part from the composite value.",
+                    "extracted_value": "Administrator",
+                    "confidence": 0.95
+                }
+            ]
+        },
+        {
+            "description": "Example 3 — Partial extraction from a date (day / month / year)",
+            "input": {
+                "context": "Data _____/_____/_____\n(ziua / luna / anul)",
+                "fields": [
+                    {"id": "d1", "position": "first _____ (before first /)"},
+                    {"id": "d2", "position": "second _____ (between / and /)"},
+                    {"id": "d3", "position": "third _____ (after second /)"}
+                ],
+                "available_keys": ["Data", "Data completarii"]
+            },
+            "output": [
+                {"id": "d1", "selected_key": "Data", "reasoning": "Context asks for 'ziua'. Value is '2025-10-08'. Extract day: '08'.", "extracted_value": "08", "confidence": 0.95},
+                {"id": "d2", "selected_key": "Data", "reasoning": "Context asks for 'luna'. Extract month: '10'.", "extracted_value": "10", "confidence": 0.95},
+                {"id": "d3", "selected_key": "Data", "reasoning": "Context asks for 'anul'. Extract year: '2025'.", "extracted_value": "2025", "confidence": 0.95}
+            ]
+        }
+    ]
 
     payload = {
         "task": "You are a strict data entry mapping system. Read the provided text chunks, each containing a [[PLACEHOLDER_ID: ...]]. For each placeholder, select the EXACT matching JSON key from the 'available_data'.",
         "rules": [
-            "1. You MUST select an exact string key from 'available_data', or return null if none is a good fit.",
-            "2. Pay close attention to the surrounding text (before and after the placeholder).",
-            "3. CRITICAL: If multiple keys are valid (e.g. variants of the same concept), STRICTLY count the exact overlapping words between the JSON key and the immediate context ('ctx_before' and 'ctx_after') and ALWAYS choose the key with the highest literal word overlap.",
-            "4. If the context surrounding the placeholder specifically asks for a part of the value (e.g., just the 'ziua/day' or 'luna/month' from a full date, or just one item from a list of partners), you MUST provide that exact partial substring (from the data value) in the 'extracted_value' field.",
-            "5. If no partial extraction is needed, leave 'extracted_value' as null.",
-            "6. Return a JSON array: [{\"id\": \"<PLACEHOLDER_ID>\", \"selected_key\": \"<JSON_KEY>\" | null, \"reasoning\": \"<MATCHING_LOGIC>\", \"extracted_value\": \"<SUBSTRING>\" | null, \"confidence\": 0.0-1.0}]"
+            "1. Select an exact string key from 'available_data', or null if none fits.",
+            "2. Use ALL surrounding context: text before/after placeholder AND previous/next paragraphs.",
+            "3. When multiple keys seem valid, choose the one MOST SPECIFIC to the full context. A key that matches both the immediate text AND the paragraph-level hint (in parentheses) is better than one matching only partially.",
+            "4. When multiple placeholders appear in the same sentence, consider them TOGETHER — they often represent parts of the same concept (e.g., name + role, amount + currency).",
+            "5. If the context asks for a PART of a value (e.g., day from a date, one name from a composite), provide that substring in 'extracted_value'. Otherwise leave it null.",
+            "6. Return ONLY a JSON array: [{\"id\": \"<ID>\", \"selected_key\": \"<KEY>\"|null, \"reasoning\": \"<why>\", \"extracted_value\": \"<substring>\"|null, \"confidence\": 0.0-1.0}]"
         ],
+        "examples": examples,
         "available_data": data,
         "document_chunk": chunk_text
     }
@@ -114,7 +172,7 @@ def _llm_map_chunk(client: Any, chunk: List[Dict], data: Dict[str, Any], model: 
         msg_list = [
             {"role": "user", "content": user_content}
         ]
-        
+
         # Anthropic Message API call
         resp = client.messages.create(
             model=model,
@@ -163,7 +221,7 @@ def build_mapping(
     tables: List[Dict],
     data: Dict[str, Any],
     cache_path: str = 'cache/mapping_cache.json',
-    model: str = 'claude-3-7-sonnet-latest',
+    model: str = 'claude-haiku-4-5-20251001',
 ) -> Dict[str, Any]:
     
     json_keys = list(data.keys())
@@ -297,10 +355,23 @@ def build_mapping(
             
     entities = non_table_entities
 
-    # 2. Process textual chunks using LLM
-    CHUNK_SIZE = 10
-    for i in range(0, len(entities), CHUNK_SIZE):
-        chunk = entities[i : i + CHUNK_SIZE]
+    # 2. Process textual chunks using LLM — semantic chunking by para_index
+    def _semantic_chunks(ents: List[Dict], soft_limit: int = 10, hard_limit: int = 15) -> List[List[Dict]]:
+        chunks: List[List[Dict]] = []
+        current: List[Dict] = []
+        for ent in ents:
+            pid = _para_index_from_location(ent.get('location', ''))
+            if current:
+                prev_pid = _para_index_from_location(current[-1].get('location', ''))
+                if len(current) >= hard_limit or (len(current) >= soft_limit and pid != prev_pid):
+                    chunks.append(current)
+                    current = []
+            current.append(ent)
+        if current:
+            chunks.append(current)
+        return chunks
+
+    for chunk in _semantic_chunks(entities):
         
         # Filter what needs LLM vs what's in cache
         to_process = []
