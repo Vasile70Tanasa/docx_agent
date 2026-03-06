@@ -683,6 +683,43 @@ def fill_document(
             (int(f['start']), int(f['end']), repl, f, m)
         )
 
+    # ── Detect "linked" fields: same json_key, consecutive paragraphs,
+    #    one ends at para tail and next starts at para head.
+    #    Keep only the one with the longest placeholder; skip the shorter one.
+    _skip_ids: set = set()
+    _by_key: Dict[str, List[Tuple[str, int, int, Dict, Dict]]] = {}
+    for loc, reps in pending.items():
+        for start, end, repl, fld, m in reps:
+            jk = m.get('json_key', '')
+            if jk:
+                _by_key.setdefault(jk, []).append((loc, start, end, fld, m))
+    for jk, entries in _by_key.items():
+        if len(entries) < 2:
+            continue
+        entries.sort(key=lambda e: e[0])  # sort by location
+        for i in range(len(entries) - 1):
+            loc_a, s_a, e_a, fld_a, _ = entries[i]
+            loc_b, s_b, e_b, fld_b, _ = entries[i + 1]
+            seq_a = fld_a.get('seq', -1)
+            seq_b = fld_b.get('seq', -1)
+            ft_a = fld_a.get('full_text', '')
+            if seq_b - seq_a != 1:
+                continue
+            if e_a != len(ft_a) or s_b != 0:
+                continue
+            # Linked pair — skip the shorter placeholder
+            span_a = e_a - s_a
+            span_b = e_b - s_b
+            skip_fld = fld_a if span_a < span_b else fld_b
+            _skip_ids.add(skip_fld['field_id'])
+
+    # Remove skipped linked fields from pending
+    for loc in list(pending):
+        pending[loc] = [(s, e, r, f, m) for s, e, r, f, m in pending[loc]
+                        if f['field_id'] not in _skip_ids]
+        if not pending[loc]:
+            del pending[loc]
+
     for loc, reps in pending.items():
         para = lookup.get(loc)
         if not para:
