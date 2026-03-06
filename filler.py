@@ -215,7 +215,8 @@ def _build_lookup(doc: Document) -> Dict[str, Paragraph]:
 # ── 3. SPAN REPLACEMENT ─────────────────────────────────────────────────────
 
 def _replace_span(para: Paragraph, start: int, end: int, replacement: str,
-                  font_name: str, size_pt: float) -> bool:
+                  font_name: str, size_pt: float,
+                  nb_spaces: bool = False) -> bool:
     """Replace characters [start:end] in *para* with *replacement*.
     Pads to visual width; no font changes.
     """
@@ -239,6 +240,9 @@ def _replace_span(para: Paragraph, start: int, end: int, replacement: str,
     fitted_text, _ = _fit_to_field(
         replacement, orig_text, full, end, size_pt, font_name
     )
+
+    if nb_spaces:
+        fitted_text = fitted_text.replace(' ', '\u00a0')
 
     placed = False
     for i, (rs, re_) in enumerate(offsets):
@@ -701,7 +705,8 @@ def fill_document(
             if _has_dots(raw):
                 ok = _replace_dots(para, repl, start, end, fn, sz)
             else:
-                ok = _replace_span(para, start, end, repl, fn, sz)
+                ok = _replace_span(para, start, end, repl, fn, sz,
+                                   nb_spaces='\t' in para_text[:start])
             stats['filled' if ok else 'failed'] += 1
 
     # ── CHECKBOX groups ──────────────────────────────────────────────────────
