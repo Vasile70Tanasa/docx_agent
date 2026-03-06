@@ -23,7 +23,7 @@ def main() -> None:
     ap.add_argument('--data', default='input_date.json', help='JSON data file')
     ap.add_argument('--out', default='filled.docx', help='Output DOCX path')
     ap.add_argument('--cache', default='cache/mapping_cache.json')
-    ap.add_argument('--model', default='claude-haiku-4-5-20251001', help='Model for mapping')
+    ap.add_argument('--model', default='claude-haiku-4-5-20251001', help='Model for mapping (default: Haiku 4.5)')
     ap.add_argument('--vtop', action='store_true', help='Set vertical alignment=Top to prevent Formularul shift')
     args = ap.parse_args()
 

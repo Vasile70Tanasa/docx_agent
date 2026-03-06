@@ -132,7 +132,10 @@ def _fit_to_field(replacement: str, placeholder: str,
     - If replacement is LONGER: insert as-is.
     - No font changes.
     """
+    had_leading = replacement.startswith(' ') or replacement.startswith('\t')
     replacement = ' '.join(replacement.split())
+    if had_leading and replacement:
+        replacement = ' ' + replacement
 
     if '_' in placeholder:
         n_ph  = len(placeholder)
@@ -389,6 +392,58 @@ def _option_match(label: str, value: str) -> bool:
     return nl == nv or nv in nl or nl in nv or _sim(label, str(value)) > 0.72
 
 
+def _last_token(s: str) -> str:
+    """Last token from context (after comma or whole string)."""
+    s = (s or '').strip()
+    if ',' in s:
+        return s.split(',')[-1].strip()
+    return s
+
+
+def _adjust_replacement(repl: str, ctx_before: str) -> str:
+    """Fix spacing and prefix duplication.
+
+    - Add leading space when context ends with text (no space), e.g. 'Data completării' + '08/10/2025'
+    - If value duplicates what template already has: remove the duplicated part, keep only input value.
+      E.g. template "dl." + placeholder, value "dl. Popa Mihai" -> output " Popa Mihai" -> "dl. Popa Mihai"
+      E.g. template "dna" + placeholder, value "dna. Ionescu Ana" -> output ". Ionescu Ana" -> "dna. Ionescu Ana"
+    """
+    if not repl:
+        return repl
+    ctx = (ctx_before or '').strip()
+    repl = repl.strip()
+
+    # 1. Remove duplicated prefix: template has T, value has "T X" -> output only "X" with proper spacing
+    stripped_prefix = False
+    if ctx and repl:
+        token = _last_token(ctx)
+        if token:
+            rest = None
+            # repl can start with "token. " or "token " (token may be "dl." or "dna")
+            if token.endswith('.'):
+                prefix = token + ' '
+                if repl.lower().startswith(prefix.lower()):
+                    rest = repl[len(prefix):].lstrip()
+            else:
+                for sep in ('. ', ' '):
+                    prefix = token + sep
+                    if repl.lower().startswith(prefix.lower()):
+                        rest = repl[len(prefix):].lstrip()
+                        break
+            if rest is not None:
+                # Pad: if ctx ends with ".", add " "; else add ". " (e.g. "dna" needs ". " for "dna. X")
+                pad = ' ' if ctx.rstrip().endswith('.') else '. '
+                repl = pad + rest
+                stripped_prefix = True
+
+    # 2. Add leading space when context ends with letter (no space before placeholder)
+    if repl and not repl.startswith(' ') and not repl.startswith('.'):
+        if stripped_prefix or (ctx and not ctx.endswith(' ')):
+            repl = ' ' + repl
+
+    return repl
+
+
 # ── 6. TABLE FILL ───────────────────────────────────────────────────────────
 
 def _col_score(col_hdr: str, dict_key: str) -> float:
@@ -619,8 +674,9 @@ def fill_document(
         if not repl:
             stats['skipped'] += 1
             continue
+
         pending.setdefault(f['location'], []).append(
-            (int(f['start']), int(f['end']), repl, f)
+            (int(f['start']), int(f['end']), repl, f, m)
         )
 
     for loc, reps in pending.items():
@@ -628,7 +684,18 @@ def fill_document(
         if not para:
             continue
         reps.sort(key=lambda x: -x[0])     # right-to-left
-        for start, end, repl, fld in reps:
+        for start, end, repl, fld, m in reps:
+            # Use actual document text as ctx (more reliable than cached mapping)
+            para_text = para.text or ''
+            ctx_before = para_text[:start].rstrip()
+            if not ctx_before:
+                ctx_before = m.get('ctx_before') or fld.get('ctx_before', '')
+            repl = _adjust_replacement(repl, ctx_before)
+            # Ensure space: if char immediately before placeholder is not whitespace, add leading space
+            if repl and start > 0 and len(para_text) >= start:
+                char_before = para_text[start - 1]
+                if char_before not in ' \t\n' and not repl.startswith(' ') and not repl.startswith('.'):
+                    repl = ' ' + repl
             fn, sz = _detect_font(para, start, end)
             raw = fld.get('raw_span', '')
             if _has_dots(raw):
