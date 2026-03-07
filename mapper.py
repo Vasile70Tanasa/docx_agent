@@ -1,11 +1,8 @@
-"""mapper.py - Single-Pass LLM Field-to-JSON-Key Mapper
+"""mapper.py - Page-Based LLM Field-to-JSON-Key Mapper
 
-This mapper discards complex Python heuristics (like Jaccard) and label enrichment.
-Instead, it groups fields into sequential text chunks and asks the LLM to fill the 
-placeholders by choosing directly from the available JSON keys.
-
-No keys are removed from the pool after being used (to allow multiple same-key mappings).
-Only the JSON keys (not the values) are sent, to keep the context clean.
+Groups fields into page-like sections based on paragraph ranges, builds
+full page text with [[PH:id]] markers, and uses key_selector to provide
+per-placeholder candidate keys+values to the LLM.
 """
 from __future__ import annotations
 
@@ -23,6 +20,8 @@ try:
 except ImportError:
     anthropic = None
 
+from key_selector import top_keys
+
 
 def _sha(s: str) -> str:
     return hashlib.sha256(s.encode('utf-8')).hexdigest()[:16]
@@ -31,6 +30,13 @@ def _sha(s: str) -> str:
 def _para_index_from_location(location: str) -> Optional[int]:
     m = re.findall(r'p:(\d+)', location or '')
     return int(m[-1]) if m else None
+
+
+def _effective_para_index(ent: Dict) -> int:
+    """Return body-level para index for any entity (body or table cell)."""
+    if '_body_para_index' in ent:
+        return ent['_body_para_index']
+    return _para_index_from_location(ent.get('location', '')) or 999999
 
 
 class _JsonCache:
@@ -63,157 +69,179 @@ class _JsonCache:
         self._save()
 
 
-def _llm_map_chunk(client: Any, chunk: List[Dict], data: Dict[str, Any], model: str) -> Dict[str, Tuple[Optional[str], float, Optional[str], Optional[str]]]:
-    """Sends a single chunk of fields to the LLM (Anthropic) to be mapped against json_keys."""
-    
-    # Build text representation of the chunk
-    chunk_text = ""
-    for ent in chunk:
-        eid = ent['id']
-        t_type = ent.get('field_type', 'TEXT')
+# ── Page text building ────────────────────────────────────────────────────────
 
-        ctx_before = ent.get('ctx_before', '') or ''
-        ctx_after  = ent.get('ctx_after',  '') or ''
-        prev_p     = ent.get('ctx_prev_para', '') or ''
-        next_p     = ent.get('ctx_next_para', '') or ''
+def _build_page_text(paras_elements, p_start: int, p_end: int,
+                     fields_by_para: Dict[int, List[Dict]],
+                     data: Dict, n_cand: int = 10,
+                     extra_fields: Optional[List[Dict]] = None):
+    """Build page text with [[PH:id]] markers + per-placeholder candidate lists.
 
-        # DYNAMIC CONTEXT PRESERVATION:
-        # Even if the line context is long, if adjacent paragraphs contain a hint '(',
-        # we MUST include them to avoid "context blindness".
-        ctx = ""
-        if '(' in prev_p or len(ctx_before) < 50:
-            ctx += prev_p + "\n"
+    paras_elements: list of lxml w:p elements (direct body children).
+    extra_fields: table-cell fields not in body paragraphs but included for candidates.
+    Returns (page_text, page_fields, cand_section).
+    """
+    from docx.text.paragraph import Paragraph as P
 
-        ctx += ctx_before + f" [[PLACEHOLDER_ID: {eid}]] " + ctx_after
+    page_fields = []
+    lines = []
 
-        if '(' in next_p or len(ctx_after) < 50:
-            ctx += "\n" + next_p
+    for i in range(p_start, min(p_end + 1, len(paras_elements))):
+        para = P(paras_elements[i], None)
+        txt = para.text.strip()
+        if not txt:
+            continue
+        if i in fields_by_para:
+            flds = sorted(fields_by_para[i], key=lambda f: f['start'])
+            marked = txt
+            offset = 0
+            for fld in flds:
+                s = fld['start'] + offset
+                e = fld['end'] + offset
+                fid = fld['field_id'][:8]
+                marker = f'[[PH:{fid}]]'
+                marked = marked[:s] + marker + marked[e:]
+                offset += len(marker) - (fld['end'] - fld['start'])
+                page_fields.append(fld)
+            lines.append(marked)
+        else:
+            lines.append(txt)
 
-        chunk_text += f"---\nField Type: {t_type}\nContext:\n{ctx.strip()}\n\n"
+    # Add table-cell fields to page text as separate context lines
+    if extra_fields:
+        for fld in extra_fields:
+            fid = fld['field_id'][:8]
+            ctx = fld.get('ctx_before', '') + f' [[PH:{fid}]] ' + fld.get('ctx_after', '')
+            prev = fld.get('ctx_prev_para', '')
+            if prev:
+                ctx = prev + '\n' + ctx
+            lines.append(ctx.strip())
+            page_fields.append(fld)
 
-    examples = [
-        {
-            "description": "Example 1 — Similar keys: disambiguate using full context",
-            "input": {
-                "context": "pentru suma de [[PLACEHOLDER]] lei,\n(suma in litere si in cifre)",
-                "available_keys": ["Suma (in litere si cifre)", "Suma de ... lei (in litere si cifre)"]
-            },
-            "output": [{
-                "id": "example_1",
-                "selected_key": "Suma de ... lei (in litere si cifre)",
-                "reasoning": "Context says 'pentru suma de ___ lei' — the structure 'suma de ... lei' matches exactly the key 'Suma de ... lei (in litere si cifre)', not the more generic 'Suma (in litere si cifre)'.",
-                "extracted_value": None,
-                "confidence": 0.95
-            }]
-        },
-        {
-            "description": "Example 2 — Paired fields on the same line (name + role)",
-            "input": {
-                "context": "[[PLACEHOLDER_A]], in calitate de [[PLACEHOLDER_B]], legal autorizat sa semnez",
-                "available_keys": ["Numele in clar al persoanei autorizate", "Functia persoanei imputernicite", "Reprezentat prin - nume si calitate"]
-            },
-            "output": [
-                {
-                    "id": "example_2a",
-                    "selected_key": "Reprezentat prin - nume si calitate",
-                    "reasoning": "Placeholder A asks for a name, B asks for a role. 'Reprezentat prin - nume si calitate' contains BOTH ('Ionescu Mihai, Administrator'). Extract only the name part.",
-                    "extracted_value": "Ionescu Mihai",
-                    "confidence": 0.95
-                },
-                {
-                    "id": "example_2b",
-                    "selected_key": "Reprezentat prin - nume si calitate",
-                    "reasoning": "Same reasoning — extract the role/quality part from the composite value.",
-                    "extracted_value": "Administrator",
-                    "confidence": 0.95
-                }
-            ]
-        },
-        {
-            "description": "Example 3 — Partial extraction from a date (day / month / year)",
-            "input": {
-                "context": "Data _____/_____/_____\n(ziua / luna / anul)",
-                "fields": [
-                    {"id": "d1", "position": "first _____ (before first /)"},
-                    {"id": "d2", "position": "second _____ (between / and /)"},
-                    {"id": "d3", "position": "third _____ (after second /)"}
-                ],
-                "available_keys": ["Data", "Data completarii"]
-            },
-            "output": [
-                {"id": "d1", "selected_key": "Data", "reasoning": "Context asks for 'ziua'. Value is '2025-10-08'. Extract day: '08'.", "extracted_value": "08", "confidence": 0.95},
-                {"id": "d2", "selected_key": "Data", "reasoning": "Context asks for 'luna'. Extract month: '10'.", "extracted_value": "10", "confidence": 0.95},
-                {"id": "d3", "selected_key": "Data", "reasoning": "Context asks for 'anul'. Extract year: '2025'.", "extracted_value": "2025", "confidence": 0.95}
-            ]
-        }
-    ]
+    page_text = '\n'.join(lines)
 
-    payload = {
-        "task": "You are a strict data entry mapping system. Read the provided text chunks, each containing a [[PLACEHOLDER_ID: ...]]. For each placeholder, select the EXACT matching JSON key from the 'available_data'.",
-        "rules": [
-            "1. Select an exact string key from 'available_data', or null if none fits.",
-            "2. Use ALL surrounding context: text before/after placeholder AND previous/next paragraphs.",
-            "3. When multiple keys seem valid, choose the one MOST SPECIFIC to the full context. A key that matches both the immediate text AND the paragraph-level hint (in parentheses) is better than one matching only partially.",
-            "4. When multiple placeholders appear in the same sentence, consider them TOGETHER — they often represent parts of the same concept (e.g., name + role, amount + currency).",
-            "5. If the context asks for a PART of a value (e.g., day from a date, one name from a composite), provide that substring in 'extracted_value'. Otherwise leave it null.",
-            "6. Return ONLY a JSON array: [{\"id\": \"<ID>\", \"selected_key\": \"<KEY>\"|null, \"reasoning\": \"<why>\", \"extracted_value\": \"<substring>\"|null, \"confidence\": 0.0-1.0}]"
-        ],
-        "examples": examples,
-        "available_data": data,
-        "document_chunk": chunk_text
-    }
+    # Build candidate lists per field
+    cand_section = "\nCANDIDATE KEYS PER PLACEHOLDER (pick from these):\n"
+    for fld in page_fields:
+        fid = fld['field_id'][:8]
+        candidates = top_keys(fld, data, n=n_cand)
+        cand_lines = ', '.join(f'"{k}": "{v}"' for k, _, v in candidates)
+        cand_section += f"  {fid}: {{{cand_lines}}}\n"
+
+    return page_text, page_fields, cand_section
+
+
+def _find_section_title(paras_elements, para_index: int, max_look_back: int = 20) -> str:
+    """Scan paragraphs above para_index for a section title."""
+    from docx.text.paragraph import Paragraph as P
+
+    for i in range(para_index - 1, max(0, para_index - max_look_back) - 1, -1):
+        para = P(paras_elements[i], None)
+        txt = para.text.strip()
+        if not txt or len(txt) < 3:
+            continue
+        if 'formular' in txt.lower():
+            title = txt
+            for j in range(i + 1, min(i + 4, len(paras_elements))):
+                next_txt = P(paras_elements[j], None).text.strip()
+                if next_txt and len(next_txt) > 3:
+                    title += ' - ' + next_txt
+                    break
+            return title
+        upper_ratio = sum(1 for c in txt if c.isupper()) / max(len(txt), 1)
+        if upper_ratio > 0.6 and len(txt) > 5 and len(txt) < 100:
+            return txt
+    return ''
+
+
+# ── Page chunking ─────────────────────────────────────────────────────────────
+
+def _page_chunks(entities: List[Dict], gap: int = 15, max_fields: int = 40) -> List[Tuple[int, int, List[Dict]]]:
+    """Split entities into page-like chunks.
+
+    A new chunk starts when:
+    - gap between consecutive para indices > `gap`, OR
+    - chunk already has `max_fields` entities.
+
+    Returns list of (p_start, p_end, [entities]).
+    """
+    if not entities:
+        return []
+
+    chunks = []
+    current = [entities[0]]
+    cur_start = _effective_para_index(entities[0])
+
+    for ent in entities[1:]:
+        pid = _effective_para_index(ent)
+        prev_pid = _effective_para_index(current[-1])
+
+        if (pid - prev_pid > gap) or len(current) >= max_fields:
+            cur_end = prev_pid
+            chunks.append((cur_start, cur_end, current))
+            current = [ent]
+            cur_start = pid
+        else:
+            current.append(ent)
+
+    if current:
+        cur_end = _effective_para_index(current[-1])
+        chunks.append((cur_start, cur_end, current))
+
+    return chunks
+
+
+# ── LLM call ──────────────────────────────────────────────────────────────────
+
+def _llm_map_page(client: Any, page_text: str, cand_section: str,
+                  section_title: str, model: str) -> Dict:
+    """Send page text + candidate keys to LLM, return parsed results."""
+
+    prompt = f"""You are a document data-entry system for Romanian procurement forms.
+
+SECTION TITLE: {section_title}
+
+Below is a page from the form with placeholders marked as [[PH:xxxxxxxx]].
+For each placeholder, select the BEST matching key from its candidate list below.
+
+RULES:
+1. Select an exact key from the placeholder's candidate list, or null if none fits.
+2. Use the FULL page context to understand which key belongs where.
+3. When the same structure repeats (e.g. first = "Asociat 1", second = "Asociat 2"), use ordering.
+4. When multiple placeholders appear in the same sentence, consider them TOGETHER — they often represent parts of the same concept (e.g., name + role, amount + currency).
+5. If a placeholder asks for PART of a value (e.g. just name from "name, role", or day from a date), provide that substring in extracted_value. Otherwise leave it null.
+6. Return ONLY a JSON array.
+
+DOCUMENT PAGE:
+{page_text}
+{cand_section}
+Return ONLY a JSON array:
+[{{"id": "xxxxxxxx", "selected_key": "key"|null, "extracted_value": "substring"|null, "confidence": 0.0-1.0, "reasoning": "brief"}}]
+"""
 
     try:
-        # Move system instructions into user prompt to avoid "multiple user roles" error
-        # which can happen if some proxies/versions mangle the system/user boundary.
-        system_instr = "You output ONLY valid JSON arrays. No markdown, no conversational text."
-        user_content = f"{system_instr}\n\nTask:\n{json.dumps(payload, ensure_ascii=False)}"
-
-        msg_list = [
-            {"role": "user", "content": user_content}
-        ]
-
-        # Anthropic Message API call
         resp = client.messages.create(
-            model=model,
-            max_tokens=4096,
-            temperature=0,
-            messages=msg_list,
+            model=model, max_tokens=8192, temperature=0,
+            messages=[{"role": "user", "content": prompt}],
         )
         content = (resp.content[0].text or "").strip()
-        
-        # Robust JSON Array Extraction
-        try:
-            # First, clean markdown blocks if they exist
-            content = re.sub(r"^```(?:json)?\s*", "", content)
-            content = re.sub(r"\s*```$", "", content).strip()
-            
-            # Use regex to find the outermost [...] block
-            m = re.search(r"(\[[\s\S]*\])", content)
-            if m:
-                items = json.loads(m.group(1))
-            else:
-                items = json.loads(content)
-        except Exception as json_err:
-            print(f"LLM Mapping error (JSON parsing failed): {json_err}\nRaw Content: {content[:100]}...")
-            return {}
-        
+        content = re.sub(r"^```(?:json)?\s*", "", content)
+        content = re.sub(r"\s*```$", "", content).strip()
+        m = re.search(r"(\[[\s\S]*\])", content)
+        items = json.loads(m.group(1)) if m else json.loads(content)
+
         result = {}
         for item in items:
             eid = item.get("id")
-            sel = item.get("selected_key")
-            ext = item.get("extracted_value")
-            reasoning = item.get("reasoning")
-            conf = float(item.get("confidence", 0.0))
-            if sel not in data:
-                sel = None
             if eid:
-                result[eid] = (sel, conf, ext, reasoning)
+                result[eid] = item
         return result
     except Exception as e:
-        print(f"LLM Mapping error (Anthropic): {e}")
+        print(f"LLM Mapping error: {e}")
         return {}
 
+
+# ── Main entry point ──────────────────────────────────────────────────────────
 
 def build_mapping(
     template_fingerprint: str,
@@ -222,8 +250,9 @@ def build_mapping(
     data: Dict[str, Any],
     cache_path: str = 'cache/mapping_cache.json',
     model: str = 'claude-haiku-4-5-20251001',
+    docx_path: str = 'sample_forms.docx',
 ) -> Dict[str, Any]:
-    
+
     json_keys = list(data.keys())
     cache = _JsonCache(cache_path)
 
@@ -235,7 +264,7 @@ def build_mapping(
 
     mapping: Dict[str, Any] = {}
     entities: List[Dict] = []
-    
+
     # 1. Group checkboxes
     group_options: Dict[str, List[str]] = {}
     group_ctx: Dict[str, Dict] = {}
@@ -259,22 +288,12 @@ def build_mapping(
             if opt:
                 group_options[gid].append(opt)
         elif ftype != 'CHECKBOX':
-            entities.append({
-                'id':            f['field_id'],
-                'ctx_before':    f.get('ctx_before', ''),
-                'ctx_after':     f.get('ctx_after',  ''),
-                'ctx_prev_para': f.get('ctx_prev_para', ''),
-                'ctx_next_para': f.get('ctx_next_para', ''),
-                'field_type':    ftype,
-                'location':      f.get('location', ''),
-                'start':         f.get('start', 0),
-                'end':           f.get('end', 0),
-            })
+            entities.append(f)
 
     for gid, options in group_options.items():
         ctx = group_ctx[gid]
         entities.append({
-            'id':            gid,
+            'field_id':      gid,
             'ctx_before':    ctx.get('ctx_before', ''),
             'ctx_after':     ctx.get('ctx_after',  ''),
             'ctx_prev_para': ctx.get('ctx_prev_para', ''),
@@ -285,29 +304,9 @@ def build_mapping(
             'end':           ctx.get('end', 0),
         })
 
-    for t in tables:
-        col_info = ' '.join(h for h in t.get('col_headers', []) if h.strip())
-        entities.append({
-            'id':         t['field_id'],
-            'ctx_before': '',
-            'ctx_after':  col_info[:300],
-            'ctx_prev_para': '',
-            'ctx_next_para': '',
-            'field_type': 'TABLE',
-            'location':   t.get('location', ''),
-            'start':      0,
-            'end':        0,
-        })
-
-    # Sort entities logically (by para_index, then start)
-    def _sort_key(e):
-        pid = _para_index_from_location(e.get('location', '')) or 999999
-        return (pid, e.get('start', 0))
-    entities.sort(key=_sort_key)
-
-    # --- 1.5. Process TABLE entities with mathematical similarity ---
+    # 1.5. Process TABLE entities with mathematical similarity
     from difflib import SequenceMatcher
-    
+
     def _norm(s: str) -> str:
         s = s.lower().replace('_', ' ')
         for a, b in [('ă','a'),('â','a'),('î','i'),('ș','s'),('ş','s'),('ț','t'),('ţ','t')]:
@@ -317,7 +316,6 @@ def build_mapping(
     def _sim(a: str, b: str) -> float:
         return SequenceMatcher(None, _norm(a), _norm(b)).ratio()
 
-    # Identify JSON keys that lead to Lists/Arrays
     array_keys = []
     for k, v in data.items():
         if isinstance(v, list):
@@ -329,93 +327,135 @@ def build_mapping(
             except Exception:
                 pass
 
-    non_table_entities = []
-    for ent in entities:
-        if ent['field_type'] == 'TABLE':
-            col_info = ent.get('ctx_after', '')
-            best_k, best_s = None, 0.0
-            
-            for ak in array_keys:
-                sc = _sim(col_info, ak)
-                if sc > best_s:
-                    best_s, best_k = sc, ak
-                    
-            if best_k and best_s > 0.15: # Lower threshold since column names concatenated vs single key
-                mapping[ent['id']] = {
-                    'json_key': best_k,
-                    'confidence': best_s,
-                    'source': 'direct_table',
-                    'para_index': _para_index_from_location(ent.get('location', '')),
-                    'start': 0, 'end': 0
-                }
-            else:
-                mapping[ent['id']] = {'json_key': None, 'confidence': 0.0, 'source': 'unmatched_table'}
+    for t in tables:
+        col_info = ' '.join(h for h in t.get('col_headers', []) if h.strip())
+        best_k, best_s = None, 0.0
+        for ak in array_keys:
+            sc = _sim(col_info, ak)
+            if sc > best_s:
+                best_s, best_k = sc, ak
+        if best_k and best_s > 0.15:
+            mapping[t['field_id']] = {
+                'json_key': best_k,
+                'confidence': best_s,
+                'source': 'direct_table',
+                'para_index': _para_index_from_location(t.get('location', '')),
+                'start': 0, 'end': 0
+            }
         else:
-            non_table_entities.append(ent)
-            
-    entities = non_table_entities
+            mapping[t['field_id']] = {'json_key': None, 'confidence': 0.0, 'source': 'unmatched_table'}
 
-    # 2. Process textual chunks using LLM — semantic chunking by para_index
-    def _semantic_chunks(ents: List[Dict], soft_limit: int = 10, hard_limit: int = 15) -> List[List[Dict]]:
-        chunks: List[List[Dict]] = []
-        current: List[Dict] = []
-        for ent in ents:
-            pid = _para_index_from_location(ent.get('location', ''))
-            if current:
-                prev_pid = _para_index_from_location(current[-1].get('location', ''))
-                if len(current) >= hard_limit or (len(current) >= soft_limit and pid != prev_pid):
-                    chunks.append(current)
-                    current = []
-            current.append(ent)
-        if current:
-            chunks.append(current)
-        return chunks
+    # 2. Load DOCX paragraphs (direct body children only)
+    from docx import Document
+    from docx.oxml.ns import qn
+    doc = Document(docx_path)
+    body = doc.element.body
+    paras_elements = [el for el in body if el.tag == qn('w:p')]
 
-    for chunk in _semantic_chunks(entities):
-        
-        # Filter what needs LLM vs what's in cache
+    # Assign body-level para index to table-cell fields based on table position
+    tbl_para_index = {}
+    p_count = 0
+    t_count = 0
+    for el in body:
+        tag = el.tag.split('}')[-1]
+        if tag == 'p':
+            p_count += 1
+        elif tag == 'tbl':
+            tbl_para_index[t_count] = p_count  # para index just before this table
+            t_count += 1
+
+    for ent in entities:
+        loc = ent.get('location', '')
+        if '/t:' in loc:
+            m = re.search(r't:(\d+)', loc)
+            if m:
+                tidx = int(m.group(1))
+                ent['_body_para_index'] = tbl_para_index.get(tidx, 999999)
+
+    # Sort entities by para_index, then start
+    def _sort_key(e):
+        if '_body_para_index' in e:
+            return (e['_body_para_index'], e.get('start', 0))
+        pid = _para_index_from_location(e.get('location', '')) or 999999
+        return (pid, e.get('start', 0))
+    entities.sort(key=_sort_key)
+
+    # 3. Split into page chunks and process each
+    client = anthropic.Anthropic(api_key=api_key)
+
+    for p_start, p_end, chunk_ents in _page_chunks(entities):
+        # Check cache first
         to_process = []
-        for ent in chunk:
-            eid = ent['id']
+        for ent in chunk_ents:
+            eid = ent['field_id']
             cache_key = _sha(f"{template_fingerprint}|{eid}")
             hit = cache.get(cache_key)
             if hit and hit.get('json_key') in json_keys:
                 mapping[eid] = hit
             else:
                 to_process.append(ent)
-                
-        if to_process:
-            client = anthropic.Anthropic(api_key=api_key)
-            results = _llm_map_chunk(client, to_process, data, model)
-            for ent in to_process:
-                eid = ent['id']
-                sel, conf, ext, reasoning = results.get(eid, (None, 0.0, None, None))
-                
-                res_obj = {
-                    'json_key': sel, 
-                    'extracted_value': ext,
-                    'reasoning': reasoning,
-                    'confidence': conf, 
-                    'source': 'llm_v4',
-                    'para_index': _para_index_from_location(ent.get('location', '')),
-                    'start': ent.get('start', 0),
-                    'end': ent.get('end', 0),
-                    'full_text': ent.get('full_text', ''),
-                    'label': ent.get('label', ''),
-                    'label_source': ent.get('label_source', ''),
-                    'ctx_before': ent.get('ctx_before', ''),
-                    'ctx_after': ent.get('ctx_after', ''),
-                    'ctx_prev_para': ent.get('ctx_prev_para', ''),
-                    'ctx_next_para': ent.get('ctx_next_para', '')
-                }
-                mapping[eid] = res_obj
-                
-                cache_key = _sha(f"{template_fingerprint}|{eid}")
-                cache.set(cache_key, res_obj)
+
+        if not to_process:
+            continue
+
+        # Build fields_by_para for this chunk; table-cell fields go to extra_fields
+        fields_by_para: Dict[int, List[Dict]] = {}
+        extra_fields: List[Dict] = []
+        for ent in chunk_ents:
+            if '/t:' in ent.get('location', ''):
+                extra_fields.append(ent)
+            else:
+                pid = _para_index_from_location(ent.get('location', ''))
+                if pid is not None:
+                    fields_by_para.setdefault(pid, []).append(ent)
+
+        # Expand range by a few paragraphs for context
+        expanded_start = max(0, p_start - 5)
+        expanded_end = min(len(paras_elements) - 1, p_end + 3)
+
+        page_text, page_fields, cand_section = _build_page_text(
+            paras_elements, expanded_start, expanded_end,
+            fields_by_para, data, n_cand=10,
+            extra_fields=extra_fields
+        )
+
+        section_title = _find_section_title(paras_elements, p_start)
+
+        print(f"  Chunk p:{p_start}-{p_end}: {len(to_process)} fields to map, "
+              f"title='{section_title[:40]}', {len(page_text)} chars")
+
+        results = _llm_map_page(client, page_text, cand_section, section_title, model)
+
+        for ent in to_process:
+            eid = ent['field_id']
+            fid8 = eid[:8]
+            r = results.get(fid8, {})
+            sel = r.get('selected_key')
+            ext = r.get('extracted_value')
+            reasoning = r.get('reasoning')
+            conf = float(r.get('confidence', 0.0))
+
+            if sel and sel not in data:
+                sel = None
+
+            res_obj = {
+                'json_key': sel,
+                'extracted_value': ext,
+                'reasoning': reasoning,
+                'confidence': conf,
+                'source': 'llm_page_ks',
+                'para_index': _para_index_from_location(ent.get('location', '')),
+                'start': ent.get('start', 0),
+                'end': ent.get('end', 0),
+            }
+            mapping[eid] = res_obj
+
+            cache_key = _sha(f"{template_fingerprint}|{eid}")
+            cache.set(cache_key, res_obj)
 
     # Fill unmatched
     for ent in entities:
-        if ent['id'] not in mapping:
-            mapping[ent['id']] = {'json_key': None, 'confidence': 0.0, 'source': 'unmatched'}
+        if ent['field_id'] not in mapping:
+            mapping[ent['field_id']] = {'json_key': None, 'confidence': 0.0, 'source': 'unmatched'}
 
     return mapping

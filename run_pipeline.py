@@ -77,6 +77,7 @@ def main() -> None:
         data=data,
         cache_path=os.path.join(script_dir, args.cache),
         model=args.model,
+        docx_path=docx_path,
     )
 
     mapped = sum(1 for v in mapping.values() if v.get('json_key'))
