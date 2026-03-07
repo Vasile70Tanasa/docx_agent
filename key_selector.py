@@ -31,7 +31,17 @@ def _token_overlap(a: str, b: str) -> float:
     tb = set(_norm(b).split())
     if not ta or not tb:
         return 0.0
-    return len(ta & tb) / len(ta | tb)
+    # Fuzzy Jaccard: count tokens as matching if SequenceMatcher ratio > 0.8
+    matched = set()
+    for t1 in ta:
+        for t2 in tb:
+            if t1 == t2 or SequenceMatcher(None, t1, t2).ratio() > 0.8:
+                matched.add(t1)
+                matched.add(t2)
+                break
+    # Proportion of matched tokens relative to all unique tokens
+    all_tokens = ta | tb
+    return len(matched) / len(all_tokens) if all_tokens else 0.0
 
 
 def score_key(field: Dict, key: str) -> float:
@@ -52,11 +62,25 @@ def score_key(field: Dict, key: str) -> float:
     # Score each context separately
     score_label = _token_overlap(label, key) if label else 0
     score_next = _token_overlap(ctx_next, key) if ctx_next else 0
-    score_immed = (_token_overlap(ctx_before, key) + _token_overlap(ctx_after, key)) / 2 if (ctx_before or ctx_after) else 0
+    score_before = _token_overlap(ctx_before, key) if ctx_before else 0
+    score_after = _token_overlap(ctx_after, key) if ctx_after else 0
+    score_immed = (score_before + score_after) / 2 if (ctx_before or ctx_after) else 0
     score_prev = _token_overlap(ctx_prev, key) if ctx_prev else 0
 
-    # Weighted combination: label and next_para have highest weight
-    return 0.5 * score_label + 0.3 * score_next + 0.15 * score_immed + 0.05 * score_prev
+    # Combined context: catch keys that match across multiple context parts
+    all_ctx = ' '.join(filter(None, [label, ctx_before, ctx_after, ctx_prev, ctx_next]))
+    score_combined = _token_overlap(all_ctx, key) if all_ctx else 0
+
+    # If label came from next_para (not parentheses), reduce its weight
+    # and boost ctx_before/after which are closer to the placeholder
+    label_src = field.get('label_source', '')
+    if label_src == 'next_para':
+        w_label, w_next, w_immed = 0.20, 0.20, 0.30
+    else:
+        w_label, w_next, w_immed = 0.45, 0.25, 0.10
+
+    weighted = w_label * score_label + w_next * score_next + w_immed * score_immed + 0.05 * score_prev
+    return weighted + 0.15 * score_combined
 
 
 def top_keys(field: Dict, data: Dict, n: int = 10) -> List[Tuple[str, float, str]]:

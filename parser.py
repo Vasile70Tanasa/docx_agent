@@ -150,8 +150,10 @@ def _extract_label(
             if len(t) >= 2:
                 return t, 'next_para_hint'
 
-        # Fallback: only use next_para if prefix is short
-        if _norm(prefix or '') == '' or len(_norm(prefix)) < 25:
+        # Fallback: only use next_para if prefix has no meaningful word
+        norm_pfx = _norm(prefix or '')
+        has_word = any(len(w) >= 3 and w.isalpha() for w in norm_pfx.split())
+        if not has_word:
             m3 = RE_PARENS.search(_norm(next_text))
             if m3:
                 t = _norm(m3.group(1)).strip(' .;,:')
