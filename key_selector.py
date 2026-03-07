@@ -1,0 +1,113 @@
+"""key_selector.py - Pre-select top N JSON keys for a placeholder using combined similarity.
+
+Combines:
+  - SequenceMatcher ratio on normalized text
+  - Token overlap (Jaccard) between context words and key words
+
+Usage:
+    python key_selector.py
+"""
+from __future__ import annotations
+
+import json
+import re
+from difflib import SequenceMatcher
+from typing import Dict, List, Tuple
+
+
+def _norm(s: str) -> str:
+    s = s.lower()
+    for a, b in [('ă','a'),('â','a'),('î','i'),('ș','s'),('ş','s'),('ț','t'),('ţ','t')]:
+        s = s.replace(a, b)
+    return re.sub(r'\s+', ' ', re.sub(r'[^\w\s]', ' ', s)).strip()
+
+
+def _seq_sim(a: str, b: str) -> float:
+    return SequenceMatcher(None, _norm(a), _norm(b)).ratio()
+
+
+def _token_overlap(a: str, b: str) -> float:
+    ta = set(_norm(a).split())
+    tb = set(_norm(b).split())
+    if not ta or not tb:
+        return 0.0
+    return len(ta & tb) / len(ta | tb)
+
+
+def score_key(field: Dict, key: str) -> float:
+    """Combined similarity score between a field's context and a JSON key.
+
+    Weights parts differently:
+    - label (highest): direct hint
+    - ctx_next_para (high): hint in parentheses
+    - ctx_before/after (medium): immediate context
+    - ctx_prev_para (low): previous paragraph
+    """
+    label = field.get('label', '')
+    ctx_before = field.get('ctx_before', '')
+    ctx_after = field.get('ctx_after', '')
+    ctx_prev = field.get('ctx_prev_para', '')
+    ctx_next = field.get('ctx_next_para', '')
+
+    # Score each context separately
+    score_label = _token_overlap(label, key) if label else 0
+    score_next = _token_overlap(ctx_next, key) if ctx_next else 0
+    score_immed = (_token_overlap(ctx_before, key) + _token_overlap(ctx_after, key)) / 2 if (ctx_before or ctx_after) else 0
+    score_prev = _token_overlap(ctx_prev, key) if ctx_prev else 0
+
+    # Weighted combination: label and next_para have highest weight
+    return 0.5 * score_label + 0.3 * score_next + 0.15 * score_immed + 0.05 * score_prev
+
+
+def top_keys(field: Dict, data: Dict, n: int = 10) -> List[Tuple[str, float, str]]:
+    """Return top N (key, score, value) tuples for a field."""
+    scored = []
+    for key, val in data.items():
+        s = score_key(field, key)
+        scored.append((key, s, str(val)[:80]))
+    scored.sort(key=lambda x: -x[1])
+    return scored[:n]
+
+
+def select_all(fields: list, data: Dict, n: int = 10) -> Dict:
+    """Run top_keys for every field. Returns {field_id: {location, label, candidates: [{key, value}, ...]}}."""
+    result = {}
+    for fld in fields:
+        if fld.get('field_type') == 'CHECKBOX':
+            continue
+        fid = fld['field_id']
+        candidates = []
+        for key, score, val in top_keys(fld, data, n):
+            candidates.append({'key': key, 'value': val})
+        result[fid] = {
+            'location': fld.get('location', ''),
+            'label': fld.get('label', ''),
+            'candidates': candidates
+        }
+    return result
+
+
+if __name__ == '__main__':
+    import sys, io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
+    with open('parser_result.json', encoding='utf-8') as f:
+        pr = json.load(f)
+    with open('input_date.json', encoding='utf-8') as f:
+        data = json.load(f)
+
+    result = select_all(pr['fields'], data)
+
+    # Save to JSON (without scores — LLM should not see them)
+    with open('key_selector_result.json', 'w', encoding='utf-8') as f:
+        json.dump(result, f, ensure_ascii=False, indent=2)
+
+    print(f"Saved {len(result)} fields to key_selector_result.json")
+
+    # Also print summary
+    for fid, entry in result.items():
+        loc = entry.get('location', '')
+        label = entry.get('label', '')[:40]
+        candidates = entry.get('candidates', [])
+        top_key = candidates[0]['key'] if candidates else '???'
+        print(f"  {loc:15s} [{label:40s}] top: {top_key}")
