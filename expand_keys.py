@@ -34,6 +34,7 @@ RULES:
 5. For array values (JSON strings starting with "["), expand each element with an index.
 6. Do NOT split keys that are already atomic (single value).
 7. Do NOT invent data — only decompose what exists in the value.
+8. When a key name mentions sub-components (e.g. "zi / luna / an", "serie, numar, CNP"), split the value into those exact sub-components.
 
 EXAMPLES of splits:
 
@@ -55,8 +56,14 @@ Add:
   "Contributie parte 2 - procent": "40%"
   "Contributie parte 2 - denumire": "SC Partener 2 SRL"
 
+Original: "Data parafare (zi / luna / an)": "2025-10-01"
+Add:
+  "Data parafare - zi": "01"
+  "Data parafare - luna": "10"
+  "Data parafare - an": "2025"
+
 Original: "Data": "2025-10-08"
-DO NOT split (already atomic).
+DO NOT split (already atomic — the key name has no sub-components like zi/luna/an).
 
 INPUT JSON:
 {input_json}

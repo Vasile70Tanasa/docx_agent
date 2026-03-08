@@ -211,17 +211,17 @@ For each placeholder, select the BEST matching key from its candidate list below
 
 RULES:
 1. Select an exact key from the placeholder's candidate list, or null if none fits.
-2. Use the FULL page context to understand which key belongs where.
-3. When the same structure repeats (e.g. first = "Asociat 1", second = "Asociat 2"), use ordering.
-4. When multiple placeholders appear in the same sentence, consider them TOGETHER — they often represent parts of the same concept (e.g., name + role, amount + currency).
-5. If a placeholder asks for PART of a value (e.g. just name from "name, role", or day from a date), provide that substring in extracted_value. Otherwise leave it null.
+2. When both a composite key (e.g. "Asociat 1 - denumire, sediu, telefon") and its derived sub-key (e.g. "Asociat 1 - denumire") appear in the candidate list, prefer the sub-key if the placeholder asks for only that piece of information. Do NOT treat shorter keys as automatically more specific — "Suma (in litere si cifre)" and "Suma de ... lei (in litere si cifre)" are BOTH atomic keys, not parent-child.
+3. Use the FULL page context to understand which key belongs where.
+4. When the same structure repeats (e.g. first = "Asociat 1", second = "Asociat 2"), use ordering.
+5. When multiple placeholders appear in the same sentence, consider them TOGETHER — they often represent parts of the same concept (e.g., name + role, amount + currency).
 6. Return ONLY a JSON array.
 
 DOCUMENT PAGE:
 {page_text}
 {cand_section}
 Return ONLY a JSON array:
-[{{"id": "xxxxxxxx", "selected_key": "key"|null, "extracted_value": "substring"|null, "confidence": 0.0-1.0, "reasoning": "brief"}}]
+[{{"id": "xxxxxxxx", "selected_key": "key"|null, "confidence": 0.0-1.0, "reasoning": "brief"}}]
 """
 
     try:
@@ -431,6 +431,9 @@ def build_mapping(
 
         results = _llm_map_page(client, page_text, cand_section, section_title, model)
 
+        # Collect null results for fallback retry
+        null_fields = []
+
         for ent in to_process:
             eid = ent['field_id']
             fid8 = eid[:8]
@@ -442,6 +445,10 @@ def build_mapping(
 
             if sel and sel not in data:
                 sel = None
+
+            if sel is None:
+                null_fields.append(ent)
+                continue
 
             res_obj = {
                 'json_key': sel,
@@ -457,6 +464,61 @@ def build_mapping(
 
             cache_key = _sha(f"{template_fingerprint}|{eid}")
             cache.set(cache_key, res_obj)
+
+        # Fallback: retry null fields with full key list
+        if null_fields:
+            all_keys_str = ', '.join(f'"{k}"' for k in json_keys)
+            fallback_section = f"\nALL AVAILABLE KEYS:\n{all_keys_str}\n"
+            # Build minimal page text with only null fields' context
+            fallback_lines = []
+            for fld in null_fields:
+                fid8 = fld['field_id'][:8]
+                ctx = (fld.get('ctx_before', '') + f' [[PH:{fid8}]] ' +
+                       fld.get('ctx_after', '')).strip()
+                label = fld.get('label', '')
+                if label:
+                    ctx = f"[label: {label}] {ctx}"
+                prev = fld.get('ctx_prev_para', '')
+                nxt = fld.get('ctx_next_para', '')
+                if prev:
+                    ctx = prev + '\n' + ctx
+                if nxt:
+                    ctx = ctx + '\n' + nxt
+                fallback_lines.append(ctx)
+
+            fallback_text = '\n---\n'.join(fallback_lines)
+            fallback_cand = fallback_section
+
+            print(f"    Fallback retry: {len(null_fields)} fields with all keys")
+            fallback_results = _llm_map_page(
+                client, fallback_text, fallback_cand, section_title, model)
+
+            for ent in null_fields:
+                eid = ent['field_id']
+                fid8 = eid[:8]
+                r = fallback_results.get(fid8, {})
+                sel = r.get('selected_key')
+                ext = r.get('extracted_value')
+                reasoning = r.get('reasoning', '')
+                conf = float(r.get('confidence', 0.0))
+
+                if sel and sel not in data:
+                    sel = None
+
+                res_obj = {
+                    'json_key': sel,
+                    'extracted_value': ext,
+                    'reasoning': f'fallback: {reasoning}' if reasoning else 'fallback',
+                    'confidence': conf,
+                    'source': 'llm_fallback',
+                    'para_index': _para_index_from_location(ent.get('location', '')),
+                    'start': ent.get('start', 0),
+                    'end': ent.get('end', 0),
+                }
+                mapping[eid] = res_obj
+
+                cache_key = _sha(f"{template_fingerprint}|{eid}")
+                cache.set(cache_key, res_obj)
 
     # Fill unmatched
     for ent in entities:

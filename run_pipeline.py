@@ -20,7 +20,7 @@ from filler import fill_document
 def main() -> None:
     ap = argparse.ArgumentParser(description='Fill DOCX form from JSON data (Single-Pass pipeline)')
     ap.add_argument('--docx', default='sample_forms.docx', help='Input DOCX template')
-    ap.add_argument('--data', default='input_date_expanded.json', help='JSON data file')
+    ap.add_argument('--data', default='input_date.json', help='JSON data file (will auto-expand if needed)')
     ap.add_argument('--out', default='filled.docx', help='Output DOCX path')
     ap.add_argument('--cache', default='cache/mapping_cache.json')
     ap.add_argument('--model', default='claude-haiku-4-5-20251001', help='Model for mapping (default: Haiku 4.5)')
@@ -51,6 +51,26 @@ def main() -> None:
 
     with open(data_path, encoding='utf-8') as f:
         data = json.load(f)
+
+    # Auto-expand composite keys if expanded file doesn't exist or is older than source
+    cache_dir = os.path.join(script_dir, 'cache')
+    os.makedirs(cache_dir, exist_ok=True)
+    expanded_name = os.path.splitext(os.path.basename(data_path))[0] + '_expanded.json'
+    expanded_path = os.path.join(cache_dir, expanded_name)
+    need_expand = not os.path.exists(expanded_path)
+    if not need_expand:
+        need_expand = os.path.getmtime(data_path) > os.path.getmtime(expanded_path)
+    if need_expand:
+        print('Expanding composite keys ...')
+        from expand_keys import expand_keys
+        data = expand_keys(data)
+        with open(expanded_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        print(f'  Saved {len(data)} keys to {os.path.basename(expanded_path)}')
+    else:
+        print(f'Using cached expanded keys: {os.path.basename(expanded_path)}')
+        with open(expanded_path, encoding='utf-8') as f:
+            data = json.load(f)
 
     # Step 1: Parse
     print('Parsing document ...')
