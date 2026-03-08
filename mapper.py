@@ -221,7 +221,7 @@ DOCUMENT PAGE:
 {page_text}
 {cand_section}
 Return ONLY a JSON array:
-[{{"id": "xxxxxxxx", "selected_key": "key"|null, "confidence": 0.0-1.0, "reasoning": "brief"}}]
+[{{"id": "xxxxxxxx", "selected_key": "key"|null, "extracted_value": "subset of value for this specific placeholder, or null if the full value should be used", "confidence": 0.0-1.0, "reasoning": "brief"}}]
 """
 
     try:

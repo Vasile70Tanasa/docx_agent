@@ -35,6 +35,8 @@ RULES:
 6. Do NOT split keys that are already atomic (single value).
 7. Do NOT invent data — only decompose what exists in the value.
 8. When a key name mentions sub-components (e.g. "zi / luna / an", "serie, numar, CNP"), split the value into those exact sub-components.
+9. Do NOT split when the key asks for BOTH representations together (e.g. "in litere si cifre", "in litere și cifre"). The value "90 (nouazeci)" is already in the expected format — litere AND cifre combined. Splitting would break the intent.
+10. When the key contains "lista" or implies multiple items, AND the value contains a comma-separated enumeration of distinct entities (e.g. "dl. X, dna. Y"), split each entity into its own sub-key.
 
 EXAMPLES of splits:
 
@@ -64,6 +66,14 @@ Add:
 
 Original: "Data": "2025-10-08"
 DO NOT split (already atomic — the key name has no sub-components like zi/luna/an).
+
+Original: "Valabilitate oferta - ... zile (in litere si cifre)": "90 (nouazeci)"
+DO NOT split — the key asks for litere AND cifre together, and the value already provides both.
+
+Original: "Lista persoane cu functii de decizie in autoritatea contractanta": "dl. Popa Mihai, dna. Ionescu Ana"
+Add:
+  "Lista persoane - 1": "dl. Popa Mihai"
+  "Lista persoane - 2": "dna. Ionescu Ana"
 
 INPUT JSON:
 {input_json}
