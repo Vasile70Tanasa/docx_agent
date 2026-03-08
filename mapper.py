@@ -6,10 +6,15 @@ per-placeholder candidate keys+values to the LLM.
 """
 from __future__ import annotations
 
+import io
 import json
 import os
 import re
+import sys
 import hashlib
+
+if hasattr(sys.stdout, 'buffer'):
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 from typing import Any, Dict, List, Optional, Tuple
 
 from dotenv import load_dotenv

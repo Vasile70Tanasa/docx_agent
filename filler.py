@@ -820,7 +820,7 @@ if __name__ == '__main__':
     ap.add_argument('--docx', default='sample_forms.docx')
     ap.add_argument('--parser', default='parser_enriched_full.json')
     ap.add_argument('--mapping', default='mapping.json')
-    ap.add_argument('--data', default='input_date.json')
+    ap.add_argument('--data', default='input_date_expanded.json')
     ap.add_argument('--out', default='filled.docx')
     args = ap.parse_args()
 

@@ -117,7 +117,7 @@ if __name__ == '__main__':
 
     with open('parser_result.json', encoding='utf-8') as f:
         pr = json.load(f)
-    with open('input_date.json', encoding='utf-8') as f:
+    with open('input_date_expanded.json', encoding='utf-8') as f:
         data = json.load(f)
 
     result = select_all(pr['fields'], data)

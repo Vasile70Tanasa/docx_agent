@@ -1,7 +1,7 @@
 """run_pipeline.py - Single-Pass pipeline: parse → map → fill
 
 Usage:
-    python run_pipeline.py --docx sample_forms.docx --data input_date.json
+    python run_pipeline.py --docx sample_forms.docx --data input_date_expanded.json
 """
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ from filler import fill_document
 def main() -> None:
     ap = argparse.ArgumentParser(description='Fill DOCX form from JSON data (Single-Pass pipeline)')
     ap.add_argument('--docx', default='sample_forms.docx', help='Input DOCX template')
-    ap.add_argument('--data', default='input_date.json', help='JSON data file')
+    ap.add_argument('--data', default='input_date_expanded.json', help='JSON data file')
     ap.add_argument('--out', default='filled.docx', help='Output DOCX path')
     ap.add_argument('--cache', default='cache/mapping_cache.json')
     ap.add_argument('--model', default='claude-haiku-4-5-20251001', help='Model for mapping (default: Haiku 4.5)')
