@@ -22,6 +22,7 @@ IMPORTANT: field_id is stable — does NOT include label in hash.
 """
 from __future__ import annotations
 
+import os
 import re
 import hashlib
 from dataclasses import dataclass, asdict
@@ -250,7 +251,7 @@ def iter_block_items(parent) -> Iterator:
 
 
 def _compute_fingerprint(doc: DocxDocument, path: str) -> str:
-    parts = [path]
+    parts = [os.path.basename(path)]
     for p in list(doc.paragraphs)[:60]:
         parts.append(p.text or '')
     return _sha('\n'.join(parts))

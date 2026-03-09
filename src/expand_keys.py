@@ -110,16 +110,16 @@ def main() -> None:
             sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
     ap = argparse.ArgumentParser(description='Expand composite JSON keys into atomic sub-keys')
-    ap.add_argument('--input', default='input_date.json', help='Input JSON file')
-    ap.add_argument('--output', default='input_date_expanded.json', help='Output JSON file')
+    ap.add_argument('--input', default='input/input_date.json', help='Input JSON file')
+    ap.add_argument('--output', default='cache/input_date_expanded.json', help='Output JSON file')
     ap.add_argument('--model', default='claude-sonnet-4-20250514', help='Model to use')
     args = ap.parse_args()
 
-    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     input_path = args.input
     if not os.path.isabs(input_path):
-        input_path = os.path.join(script_dir, input_path)
+        input_path = os.path.join(project_dir, input_path)
 
     with open(input_path, encoding='utf-8') as f:
         data = json.load(f)
@@ -139,7 +139,7 @@ def main() -> None:
 
     output_path = args.output
     if not os.path.isabs(output_path):
-        output_path = os.path.join(script_dir, output_path)
+        output_path = os.path.join(project_dir, output_path)
 
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(expanded, f, ensure_ascii=False, indent=2)

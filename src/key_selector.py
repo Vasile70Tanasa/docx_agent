@@ -112,21 +112,24 @@ def select_all(fields: list, data: Dict, n: int = 10) -> Dict:
 
 
 if __name__ == '__main__':
-    import sys, io
+    import os, sys, io
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-    with open('parser_result.json', encoding='utf-8') as f:
+    project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+    with open(os.path.join(project_dir, 'debug/parser_result.json'), encoding='utf-8') as f:
         pr = json.load(f)
-    with open('input_date_expanded.json', encoding='utf-8') as f:
+    with open(os.path.join(project_dir, 'cache/input_date_expanded.json'), encoding='utf-8') as f:
         data = json.load(f)
 
     result = select_all(pr['fields'], data)
 
     # Save to JSON (without scores — LLM should not see them)
-    with open('key_selector_result.json', 'w', encoding='utf-8') as f:
+    out_path = os.path.join(project_dir, 'debug/key_selector_result.json')
+    with open(out_path, 'w', encoding='utf-8') as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
 
-    print(f"Saved {len(result)} fields to key_selector_result.json")
+    print(f"Saved {len(result)} fields to {out_path}")
 
     # Also print summary
     for fid, entry in result.items():

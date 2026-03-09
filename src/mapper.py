@@ -254,8 +254,8 @@ def build_mapping(
     tables: List[Dict],
     data: Dict[str, Any],
     cache_path: str = 'cache/mapping_cache.json',
-    model: str = 'claude-haiku-4-5-20251001',
-    docx_path: str = 'sample_forms.docx',
+    model: str = 'claude-sonnet-4-20250514',
+    docx_path: str = 'input/sample_forms.docx',
 ) -> Dict[str, Any]:
 
     json_keys = list(data.keys())
@@ -395,7 +395,7 @@ def build_mapping(
             eid = ent['field_id']
             cache_key = _sha(f"{template_fingerprint}|{eid}")
             hit = cache.get(cache_key)
-            if hit and hit.get('json_key') in json_keys:
+            if hit and (hit.get('json_key') is None or hit.get('json_key') in json_keys):
                 mapping[eid] = hit
             else:
                 to_process.append(ent)
@@ -403,33 +403,60 @@ def build_mapping(
         if not to_process:
             continue
 
-        # Build fields_by_para for this chunk; table-cell fields go to extra_fields
-        fields_by_para: Dict[int, List[Dict]] = {}
-        extra_fields: List[Dict] = []
-        for ent in chunk_ents:
-            if '/t:' in ent.get('location', ''):
-                extra_fields.append(ent)
-            else:
-                pid = _para_index_from_location(ent.get('location', ''))
-                if pid is not None:
-                    fields_by_para.setdefault(pid, []).append(ent)
-
-        # Expand range by a few paragraphs for context
-        expanded_start = max(0, p_start - 5)
-        expanded_end = min(len(paras_elements) - 1, p_end + 3)
-
-        page_text, page_fields, cand_section = _build_page_text(
-            paras_elements, expanded_start, expanded_end,
-            fields_by_para, data, n_cand=10,
-            extra_fields=extra_fields
-        )
-
         section_title = _find_section_title(paras_elements, p_start)
 
-        print(f"  Chunk p:{p_start}-{p_end}: {len(to_process)} fields to map, "
-              f"title='{section_title[:40]}', {len(page_text)} chars")
+        # If few fields to process, skip full page text — use compact per-field context
+        if len(to_process) <= 3:
+            print(f"  Chunk p:{p_start}-{p_end}: {len(to_process)} fields (compact), "
+                  f"title='{section_title[:40]}'")
+            compact_lines = []
+            compact_cand = "\nCANDIDATE KEYS PER PLACEHOLDER (pick from these):\n"
+            for fld in to_process:
+                fid8 = fld['field_id'][:8]
+                ctx = (fld.get('ctx_before', '') + f' [[PH:{fid8}]] ' +
+                       fld.get('ctx_after', '')).strip()
+                label = fld.get('label', '')
+                if label:
+                    ctx = f"[label: {label}] {ctx}"
+                prev = fld.get('ctx_prev_para', '')
+                nxt = fld.get('ctx_next_para', '')
+                if prev:
+                    ctx = prev + '\n' + ctx
+                if nxt:
+                    ctx = ctx + '\n' + nxt
+                compact_lines.append(ctx)
+                candidates = top_keys(fld, data, n=10)
+                cand_str = ', '.join(f'"{k}": "{v}"' for k, _, v in candidates)
+                compact_cand += f"  {fid8}: {{{cand_str}}}\n"
+            page_text = '\n---\n'.join(compact_lines)
+            cand_section = compact_cand
+            results = _llm_map_page(client, page_text, cand_section, section_title, model)
+        else:
+            # Build fields_by_para for this chunk; table-cell fields go to extra_fields
+            fields_by_para: Dict[int, List[Dict]] = {}
+            extra_fields: List[Dict] = []
+            for ent in chunk_ents:
+                if '/t:' in ent.get('location', ''):
+                    extra_fields.append(ent)
+                else:
+                    pid = _para_index_from_location(ent.get('location', ''))
+                    if pid is not None:
+                        fields_by_para.setdefault(pid, []).append(ent)
 
-        results = _llm_map_page(client, page_text, cand_section, section_title, model)
+            # Expand range by a few paragraphs for context
+            expanded_start = max(0, p_start - 5)
+            expanded_end = min(len(paras_elements) - 1, p_end + 3)
+
+            page_text, page_fields, cand_section = _build_page_text(
+                paras_elements, expanded_start, expanded_end,
+                fields_by_para, data, n_cand=10,
+                extra_fields=extra_fields
+            )
+
+            print(f"  Chunk p:{p_start}-{p_end}: {len(to_process)} fields to map, "
+                  f"title='{section_title[:40]}', {len(page_text)} chars")
+
+            results = _llm_map_page(client, page_text, cand_section, section_title, model)
 
         # Collect null results for fallback retry
         null_fields = []

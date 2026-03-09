@@ -526,7 +526,6 @@ def _fill_table(doc: Document, meta: Dict, value: Any, stats: Dict,
                     continue
                 if _is_nr_col(headers[ci]):
                     _write_cell(cell, str(ei + 1), font_name, size_pt)
-                    print(f"DEBUG: Wrote NR_COL {str(ei + 1)} to cell {ci}")
                     stats['filled'] += 1
                     continue
                 best_k, best_s = None, 0.0
@@ -536,11 +535,9 @@ def _fill_table(doc: Document, meta: Dict, value: Any, stats: Dict,
                         best_s, best_k = sc, ek
                 if best_k and best_s > 0.30:
                     _write_cell(cell, _fmt(entry[best_k]), font_name, size_pt)
-                    print(f"DEBUG: Wrote {best_k} to cell {ci}")
                     stats['filled'] += 1
         elif isinstance(entry, str) and row.cells:
             _write_cell(row.cells[0], entry, font_name, size_pt)
-            print(f"DEBUG: Wrote fallback string to cell 0")
             stats['filled'] += 1
 
 
@@ -817,19 +814,19 @@ if __name__ == '__main__':
     import argparse
 
     ap = argparse.ArgumentParser(description='Fill DOCX from mapping + data')
-    ap.add_argument('--docx', default='sample_forms.docx')
-    ap.add_argument('--parser', default='parser_enriched_full.json')
-    ap.add_argument('--mapping', default='mapping.json')
-    ap.add_argument('--data', default='input_date_expanded.json')
-    ap.add_argument('--out', default='filled.docx')
+    ap.add_argument('--docx', default='input/sample_forms.docx')
+    ap.add_argument('--parser', default='debug/parser_result.json')
+    ap.add_argument('--mapping', default='debug/mapping.json')
+    ap.add_argument('--data', default='cache/input_date_expanded.json')
+    ap.add_argument('--out', default='output/sample_forms.filled.docx')
     args = ap.parse_args()
 
-    sd = os.path.dirname(os.path.abspath(__file__))
-    dp = args.docx if os.path.isabs(args.docx) else os.path.join(sd, args.docx)
-    pp = args.parser if os.path.isabs(args.parser) else os.path.join(sd, args.parser)
-    mp = args.mapping if os.path.isabs(args.mapping) else os.path.join(sd, args.mapping)
-    datp = args.data if os.path.isabs(args.data) else os.path.join(sd, args.data)
-    op = args.out if os.path.isabs(args.out) else os.path.join(sd, args.out)
+    pd = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    dp = args.docx if os.path.isabs(args.docx) else os.path.join(pd, args.docx)
+    pp = args.parser if os.path.isabs(args.parser) else os.path.join(pd, args.parser)
+    mp = args.mapping if os.path.isabs(args.mapping) else os.path.join(pd, args.mapping)
+    datp = args.data if os.path.isabs(args.data) else os.path.join(pd, args.data)
+    op = args.out if os.path.isabs(args.out) else os.path.join(pd, args.out)
 
     with open(pp, 'r', encoding='utf-8') as f:
         parsed = json.load(f)

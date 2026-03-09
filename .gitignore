@@ -7,11 +7,8 @@ __pycache__/
 # Environment
 .env
 
-# Project specific caches
-cache/
-_legacy/cache/
+# Temporary/generated
 exercise.md
-mapper_improvements.md
 
 # IDEs
 .vscode/

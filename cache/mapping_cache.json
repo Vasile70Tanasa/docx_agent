@@ -1,701 +1,655 @@
 {
-  "53a7c3313d352d7c": {
-    "json_key": "Tabel - principalele servicii in ultimii 3 ani",
-    "confidence": 0.2198581560283688,
-    "source": "direct_table",
-    "para_index": null,
-    "start": 0,
-    "end": 0
-  },
-  "a0f06500267f89c3": {
-    "json_key": "Tabel - subcontractanti si parti din contract",
-    "confidence": 0.4180790960451977,
-    "source": "direct_table",
-    "para_index": null,
-    "start": 0,
-    "end": 0
-  },
-  "0a2d0d3065af849c": {
+  "b97d52efc40d5e76": {
     "json_key": "OPERATOR ECONOMIC - denumirea / numele",
     "extracted_value": null,
-    "reasoning": "Header section asking for operator economic name/denomination",
+    "reasoning": "First occurrence in header section, matches 'OPERATOR ECONOMIC' context",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 55,
     "start": 0,
     "end": 21
   },
-  "d149e757058de5a9": {
+  "83e34f258f6ddfe8": {
     "json_key": "Catre - denumirea autoritatii contractante si adresa completa",
     "extracted_value": null,
-    "reasoning": "Form asks for contracting authority name and complete address",
+    "reasoning": "Matches exact parenthetical description '(denumirea autorităţii contractante şi adresa completă)'",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 59,
     "start": 6,
     "end": 106
   },
-  "4c0c1484fef99c16": {
+  "431cd2b191257bbf": {
     "json_key": "Denumirea / numele ofertantului",
     "extracted_value": null,
-    "reasoning": "Context specifies offeror name in parentheses",
+    "reasoning": "Matches parenthetical '(denumirea/numele ofertantului)' directly below",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 62,
     "start": 83,
     "end": 132
   },
-  "296f9844600149cf": {
+  "bfdd9466199a2a32": {
     "json_key": "Denumirea serviciilor",
     "extracted_value": null,
-    "reasoning": "Form explicitly asks for service denomination in parentheses",
+    "reasoning": "Matches parenthetical '(denumirea serviciilor)' directly below",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 63,
     "start": 86,
     "end": 182
   },
-  "63c102772e50fe8a": {
+  "9f77217da1413ce5": {
     "json_key": "Suma de ... lei (in litere si cifre)",
     "extracted_value": null,
-    "reasoning": "Main contract sum in letters and figures, followed by 'lei'",
-    "confidence": 0.95,
+    "reasoning": "Context shows 'pentru suma de ___ lei' with parenthetical '(suma în litere şi în cifre)'",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 65,
     "start": 15,
     "end": 36
   },
-  "b9ef8d004213ac79": {
+  "4cb8be734b697205": {
     "json_key": "TVA in valoare de ... lei (in litere si cifre)",
     "extracted_value": null,
-    "reasoning": "VAT amount in letters and figures, context mentions added tax value",
-    "confidence": 0.95,
+    "reasoning": "Context shows 'taxa pe valoarea adaugată în valoare de ___lei' with parenthetical '(suma în litere şi în cifre)'",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 67,
     "start": 96,
     "end": 168
   },
-  "dbdd8a4c8d3565a3": {
+  "a9536e71d7fe7eb1": {
     "json_key": "Valabilitate oferta - ... zile (in litere si cifre)",
     "extracted_value": null,
-    "reasoning": "Offer validity duration, followed by 'zile' and duration specification",
-    "confidence": 0.9,
+    "reasoning": "First part of duration specification, matches 'pentru o durată de ___' context",
+    "confidence": 0.85,
     "source": "llm_page_ks",
     "para_index": 70,
     "start": 69,
     "end": 82
   },
-  "1aa9ec9a6ed189aa": {
+  "67def9a3898a5a39": {
     "json_key": "Valabilitate oferta - ... zile (in litere si cifre)",
     "extracted_value": null,
-    "reasoning": "Same validity period as previous placeholder, part of same sentence",
-    "confidence": 0.9,
+    "reasoning": "Second part of same duration with parenthetical '(durata în litere şi cifre)'",
+    "confidence": 0.85,
     "source": "llm_page_ks",
     "para_index": 71,
     "start": 0,
     "end": 19
   },
-  "134ece4c42864475": {
+  "9f8c4b2f86814799": {
     "json_key": "Valabila pana la data",
     "extracted_value": null,
-    "reasoning": "Specific end date for offer validity, context shows date format",
-    "confidence": 0.95,
+    "reasoning": "Matches 'până la data de ___' with parenthetical '(ziua /luna /anul)'",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 71,
     "start": 52,
     "end": 81
   },
-  "1fbf76ad79bf7e5c": {
+  "cc1aa9e9e02fcbf7": {
     "json_key": "Optiune oferta alternativa (depunem / nu depunem)",
     "extracted_value": null,
-    "reasoning": "Alternative offer option checkbox, context about submitting alternative",
-    "confidence": 0.95,
+    "reasoning": "Context about alternative offer with 'depunem/nu depunem' options",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 77,
     "start": 4,
     "end": 7
   },
-  "b8c5101310d8fb59": {
+  "067a336d905eee6a": {
     "json_key": "Data",
     "extracted_value": null,
-    "reasoning": "Simple date field at document signature section",
+    "reasoning": "Simple date field at document bottom",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 84,
     "start": 5,
     "end": 22
   },
-  "a850b174c367840d": {
+  "1aee3bb320a30755": {
     "json_key": "Numele in clar al persoanei autorizate",
     "extracted_value": null,
-    "reasoning": "Name of authorized person signing the offer",
-    "confidence": 0.95,
+    "reasoning": "Person's name in signature section, followed by role description",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 85,
     "start": 0,
     "end": 14
   },
-  "3fc87ead19445bdb": {
+  "0da9ee486e721a89": {
     "json_key": "Calitate (candidat / ofertant / ofertant asociat / tert sustinator)",
     "extracted_value": null,
-    "reasoning": "Role/capacity of the person signing, context mentions 'in calitate de'",
-    "confidence": 0.9,
+    "reasoning": "Role/capacity field in 'în calitate de ___' context",
+    "confidence": 0.85,
     "source": "llm_page_ks",
     "para_index": 85,
     "start": 31,
     "end": 53
   },
-  "e168acaf38925abe": {
+  "54b231cc1a4cefb3": {
     "json_key": "Denumirea / numele operatorului economic",
     "extracted_value": null,
-    "reasoning": "Economic operator name at signature section, parentheses specify this",
+    "reasoning": "Matches parenthetical '(denumirea/numele operatorului economic)' in signature section",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 86,
     "start": 27,
     "end": 63
   },
-  "a12abdc9f4bd35d7": {
+  "0cab0f4470ae769a": {
     "json_key": "Operator economic - denumirea / numele, adresa, telefon, fax",
     "extracted_value": null,
-    "reasoning": "First form header requesting full company details (name, address, phone, fax) - matches composite key exactly",
+    "reasoning": "Header field for Form 2.2 requesting complete operator details (name, address, phone, fax) as indicated by the parenthetical description",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 104,
     "start": 0,
     "end": 32
   },
-  "0f248f6f7d5ed392": {
+  "4f202226eee85af0": {
     "json_key": "Denumirea / numele operatorului economic",
     "extracted_value": null,
-    "reasoning": "Context specifies only 'denumirea/numele şi sediul/adresa operatorului economic' but closest match is name only",
+    "reasoning": "Context shows '(denumirea/numele şi sediul/adresa operatorului economic)' but placeholder appears to be for the name portion only within the declaration text",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 111,
     "start": 42,
     "end": 114
   },
-  "fe149ff0e1726357": {
+  "43192d8e0fda6119": {
     "json_key": "Semnatura autorizata",
     "extracted_value": null,
-    "reasoning": "Placeholder appears after 'semnatura autorizată' text, requesting authorized signature",
+    "reasoning": "Clearly marked as '(semnatura autorizată)' in the document, requesting authorized signature",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 118,
     "start": 81,
     "end": 92
   },
-  "52438007efd8687c": {
+  "5007dd45dada0cb0": {
     "json_key": "Operator economic - denumirea / numele, adresa, telefon, fax",
     "extracted_value": null,
-    "reasoning": "Second form header requesting same full company details as first form",
+    "reasoning": "Header field for Form 2.3 requesting complete operator details (name, address, phone, fax) as indicated by the parenthetical description",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 147,
     "start": 0,
     "end": 32
   },
-  "3b35872355a4a311": {
+  "e59b07d4937d9760": {
     "json_key": "Denumirea / numele operatorului economic",
     "extracted_value": null,
-    "reasoning": "Same context as 0f248f6f - refers to company name and address but closest match is name only",
+    "reasoning": "Similar to earlier placeholder, context shows '(denumirea/numele şi sediul/adresa operatorului economic)' but placeholder appears to be for the name portion only",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 154,
     "start": 42,
     "end": 114
   },
-  "a3eadd831b69d589": {
+  "d500ab469a2f3022": {
     "json_key": "Nume si functie persoana autorizata",
     "extracted_value": null,
-    "reasoning": "Context shows '(nume şi functie persoana autorizata)' - exact match for name and function",
+    "reasoning": "Context shows '(nume şi functie persoana autorizata)' requesting both name and function of authorized person",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 167,
     "start": 87,
     "end": 98
   },
-  "1dd269f58c356507": {
+  "624e014716cc2b06": {
     "json_key": "Semnatura autorizata",
     "extracted_value": null,
-    "reasoning": "Context shows '(semnatura persoană autorizata şi stampila)' - requesting authorized signature and stamp",
+    "reasoning": "Context shows '(semnatura persoană autorizata şi stampila)' and this appears to be the signature portion",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 168,
     "start": 62,
     "end": 78
   },
-  "8753912462647e78": {
-    "json_key": null,
+  "f1ecd4195fbcf556": {
+    "json_key": "Adresa ofertant",
     "extracted_value": null,
-    "reasoning": "fallback: The placeholder appears after '* sau în ţara în care este stabilit' but there are no keys in the candidate list that relate to country/location establishment context",
-    "confidence": 0.0,
+    "reasoning": "fallback: The text refers to the country where the entity is established, which is part of address information for the offerant in this procurement form context",
+    "confidence": 0.8,
     "source": "llm_fallback",
     "para_index": 132,
     "start": 36,
     "end": 50
   },
-  "088413e576bceed8": {
+  "6a1a8f5e02365d0b": {
     "json_key": "OPERATOR ECONOMIC - denumirea / numele",
     "extracted_value": null,
-    "reasoning": "Placeholder appears right after 'OPERATOR ECONOMIC' header asking for company name/denomination",
+    "reasoning": "Placeholder is directly under 'OPERATOR ECONOMIC' header asking for company name",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 186,
     "start": 28,
     "end": 48
   },
-  "614ea9184d50f3d5": {
+  "a6b434e06f986e4a": {
     "json_key": "Subsemnatul - nume reprezentant imputernicit",
-    "extracted_value": "Andrei Georgescu",
-    "reasoning": "First 'Subsemnatul' in declaration context, needs representative's name",
+    "extracted_value": null,
+    "reasoning": "Context shows 'Subsemnatul [name]' - refers to the authorized representative signing",
     "confidence": 0.85,
     "source": "llm_page_ks",
     "para_index": 190,
     "start": 15,
     "end": 58
   },
-  "d1e61387d5e3ef46": {
-    "json_key": "Denumirea / numele si sediul / adresa candidatului / ofertantului",
+  "df461bdaba238f65": {
+    "json_key": "OPERATOR ECONOMIC - denumirea / numele",
     "extracted_value": null,
-    "reasoning": "Context asks for 'denumirea/numele și sediul/adresa operatorului economic' - full company details",
+    "reasoning": "Follows 'reprezentant împuternicit al [company name]' - refers to the economic operator",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 190,
     "start": 89,
     "end": 130
   },
-  "a9c40b9e27e737a2": {
+  "da31af245b2b791d": {
     "json_key": "Calitate (candidat / ofertant / ofertant asociat / tert sustinator)",
     "extracted_value": null,
-    "reasoning": "Placeholder in 'în calitate de' context, asking for role/capacity in procedure",
+    "reasoning": "Context explicitly asks for quality/role: 'în calitate de [role]'",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 190,
     "start": 205,
     "end": 247
   },
-  "a1e87d5f52c19478": {
-    "json_key": "Denumirea / numele si sediul / adresa candidatului / ofertantului",
-    "extracted_value": null,
-    "reasoning": "Continuation of previous phrase about candidate/bidder details",
-    "confidence": 0.8,
-    "source": "llm_page_ks",
-    "para_index": 190,
-    "start": 328,
-    "end": 346
-  },
-  "50d4629bc3841f08": {
+  "dedf9992dd6b8002": {
     "json_key": "Denumire procedura",
     "extracted_value": null,
-    "reasoning": "Context 'la procedura de' clearly asks for procedure name",
-    "confidence": 0.95,
+    "reasoning": "Context shows 'la procedura de [procedure name]' - refers to procurement procedure",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 190,
     "start": 365,
     "end": 409
   },
-  "27c342f990a3b487": {
+  "0ab7183e22f9f2c1": {
     "json_key": "Lista persoane cu functii de decizie in autoritatea contractanta",
     "extracted_value": "dl. Popa Mihai",
-    "reasoning": "First person in decision-making list, extract only the first person",
-    "confidence": 0.9,
+    "reasoning": "First person in the decision-making list, extracting male person part",
+    "confidence": 0.85,
     "source": "llm_page_ks",
     "para_index": 192,
     "start": 4,
     "end": 36
   },
-  "06527e2797bf9792": {
+  "f3edb6de5ef43690": {
     "json_key": "Lista persoane cu functii de decizie in autoritatea contractanta",
     "extracted_value": "dna. Ionescu Ana",
-    "reasoning": "Second person in decision-making list, extract only the second person",
-    "confidence": 0.9,
+    "reasoning": "Second person in the decision-making list, extracting female person part",
+    "confidence": 0.85,
     "source": "llm_page_ks",
     "para_index": 192,
     "start": 41,
     "end": 69
   },
-  "07ccd06b926e1b15": {
+  "c07d5461af729480": {
     "json_key": "Subsemnatul - nume reprezentant imputernicit",
     "extracted_value": null,
-    "reasoning": "Second 'Subsemnatul' in section 2, needs representative's name",
+    "reasoning": "Second occurrence of 'Subsemnatul [name]' - same authorized representative",
     "confidence": 0.85,
     "source": "llm_page_ks",
     "para_index": 195,
     "start": 15,
     "end": 34
   },
-  "8d344921ffad3cbb": {
+  "97ad2a41be6a3181": {
     "json_key": "Semnatura autorizata",
     "extracted_value": null,
-    "reasoning": "Placeholder after '(semnatura autorizată)' label at document end",
-    "confidence": 0.95,
+    "reasoning": "Directly under '(semnatura autorizată)' - refers to authorized signature",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 201,
     "start": 115,
     "end": 132
   },
-  "736ee7d430a7fc83": {
+  "d5eafa2b0bc9dd26": {
+    "json_key": "Calitate (candidat / ofertant / ofertant asociat / tert sustinator)",
+    "extracted_value": null,
+    "reasoning": "fallback: The placeholder appears in parentheses listing the exact options 'candidat/ofertant/ofertant asociat/terţ susţinător' which matches the key describing the quality/role of the economic operator",
+    "confidence": 0.95,
+    "source": "llm_fallback",
+    "para_index": 190,
+    "start": 328,
+    "end": 346
+  },
+  "50d23aa112aff66a": {
     "json_key": "Denumirea tertului sustinator tehnic si profesional",
     "extracted_value": null,
-    "reasoning": "First placeholder in form asking for third party supporter name",
+    "reasoning": "First placeholder after form title, asking for third party supporter name",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 218,
     "start": 8,
     "end": 50
   },
-  "2e56555fbd8163c5": {
+  "163f70be94a4d2fa": {
     "json_key": "Catre - denumirea autoritatii contractante si adresa completa",
     "extracted_value": null,
-    "reasoning": "Placeholder explicitly asks for contracting authority name and complete address",
+    "reasoning": "Placeholder for contracting authority name and complete address",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 223,
     "start": 7,
     "end": 87
   },
-  "dcc5fa2ebca5434f": {
+  "eabfcae99606337f": {
     "json_key": "Denumirea contractului",
     "extracted_value": null,
-    "reasoning": "Context shows this is for contract name in procurement procedure",
+    "reasoning": "Placeholder for contract name in procedure description",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 226,
     "start": 56,
     "end": 107
   },
-  "ae52b53f56479d8b": {
+  "2347d0f4d34c80c9": {
     "json_key": "Denumirea tertului sustinator tehnic si profesional",
     "extracted_value": null,
-    "reasoning": "Text explicitly mentions 'denumirea terţului susţinător tehnic şi profesional'",
+    "reasoning": "Third party technical and professional supporter name",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 226,
     "start": 160,
     "end": 173
   },
-  "3c0ac3a0d29daa50": {
+  "3baeaa7746de93dc": {
     "json_key": "Adresa tertului sustinator",
     "extracted_value": null,
-    "reasoning": "Text explicitly mentions 'adresa terţului susţinător tehnic şi profesional'",
+    "reasoning": "Address of the third party supporter",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 226,
     "start": 257,
     "end": 281
   },
-  "83e6793b937ed193": {
+  "acf014c9c0f466e9": {
     "json_key": "Operator economic - denumirea / numele",
     "extracted_value": null,
-    "reasoning": "Context shows this is for offeror/group of economic operators name",
+    "reasoning": "Name of the offeror/group of economic operators",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 226,
     "start": 409,
     "end": 423
   },
-  "117b5f5b140924f6": {
+  "ee2b39e04d0370f6": {
     "json_key": "Operator economic - denumirea / numele",
     "extracted_value": null,
-    "reasoning": "Second occurrence of offeror/group name in same context",
+    "reasoning": "Name of the offeror/group of economic operators (repeated)",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 228,
     "start": 91,
     "end": 101
   },
-  "ab95f8cabdff6978": {
+  "dab640f6bfc2790a": {
     "json_key": "Denumirea tertului sustinator tehnic si profesional",
     "extracted_value": null,
-    "reasoning": "Third occurrence of third party supporter name",
+    "reasoning": "Third party technical and professional supporter name",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 229,
     "start": 5,
     "end": 28
   },
-  "4360929612a6126f": {
+  "194638ccd4317206": {
     "json_key": "Operator economic - denumirea / numele",
     "extracted_value": null,
-    "reasoning": "Text explicitly mentions 'denumire ofertant/ grup de operatori economici'",
+    "reasoning": "Name of offeror/group of economic operators",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 229,
     "start": 225,
     "end": 248
   },
-  "afbec4f53421a5ea": {
+  "85c3b5f701c17001": {
     "json_key": "Operator economic - denumirea / numele",
     "extracted_value": null,
-    "reasoning": "Another occurrence of offeror/group name in same sentence",
+    "reasoning": "Name of offeror/group of economic operators (repeated)",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 229,
     "start": 357,
     "end": 373
   },
-  "18a13834abe75143": {
+  "101c7d1e1fa48244": {
     "json_key": "Denumirea tertului sustinator tehnic si profesional",
     "extracted_value": null,
-    "reasoning": "Fourth occurrence of third party supporter name",
+    "reasoning": "Third party technical and professional supporter name",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 230,
     "start": 5,
     "end": 23
   },
-  "8f9ba58c3b4ffd34": {
+  "71d94aba4d8e0690": {
     "json_key": "Operator economic - denumirea / numele",
     "extracted_value": null,
-    "reasoning": "Another occurrence of offeror/group name",
+    "reasoning": "Name of offeror/group of economic operators",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 230,
     "start": 245,
     "end": 262
   },
-  "9e9abc1e05bc5c02": {
+  "63a9947dba5b9bd1": {
     "json_key": "Denumirea tertului sustinator tehnic si profesional",
     "extracted_value": null,
-    "reasoning": "Fifth occurrence of third party supporter name",
+    "reasoning": "Third party technical and professional supporter name",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 231,
     "start": 4,
     "end": 38
   },
-  "d43daa58899d8fac": {
+  "8038311128cc5638": {
     "json_key": "Operator economic - denumirea / numele",
     "extracted_value": null,
-    "reasoning": "Final occurrence of offeror/group name in commitment text",
+    "reasoning": "Name of the offeror/group of economic operators",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 232,
     "start": 298,
     "end": 358
   },
-  "77a054a3a710c911": {
+  "1ac894a984764f96": {
     "json_key": "Data completarii",
     "extracted_value": null,
-    "reasoning": "Left side shows 'Data completării' field",
+    "reasoning": "Date of completion field",
     "confidence": 0.8,
     "source": "llm_page_ks",
     "para_index": 238,
     "start": 0,
     "end": 9
   },
-  "d97801d8ecf13271": {
+  "1287630036918483": {
     "json_key": "Semnatura autorizata",
     "extracted_value": null,
-    "reasoning": "Right side shows signature field for third party supporter",
+    "reasoning": "Authorized signature field",
     "confidence": 0.8,
     "source": "llm_page_ks",
     "para_index": 238,
     "start": 39,
     "end": 46
   },
-  "f9a30fc507c062d3": {
+  "d7a5d0c43d7d45e3": {
     "json_key": "Operator economic - denumirea / numele, adresa, telefon, fax",
     "extracted_value": null,
-    "reasoning": "Form 5 header explicitly asks for name, address, phone, fax",
+    "reasoning": "Complete economic operator details including name, address, phone, fax",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 250,
     "start": 0,
     "end": 32
   },
-  "f91c3b1762f09b79": {
+  "8dd74d2e031b5c36": {
     "json_key": "Numele in clar al persoanei autorizate",
     "extracted_value": null,
-    "reasoning": "Text shows 'numele în clar al persoanei autorizate'",
+    "reasoning": "Clear name of authorized person",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 259,
     "start": 12,
     "end": 32
   },
-  "7f919763b4fbdccb": {
-    "json_key": "Operator economic - denumirea / numele",
-    "extracted_value": null,
-    "reasoning": "Text shows 'denumirea/numele si sediul/adresa operatorului economic' but asking for name part",
-    "confidence": 0.9,
-    "source": "llm_page_ks",
-    "para_index": 259,
-    "start": 104,
-    "end": 136
-  },
-  "783fc43d53b56ff0": {
+  "e3af1a38fa78c280": {
     "json_key": "Numele in clar al persoanei autorizate",
     "extracted_value": null,
-    "reasoning": "Another occurrence of authorized person name",
+    "reasoning": "Clear name of authorized person (repeated)",
     "confidence": 0.8,
     "source": "llm_page_ks",
     "para_index": 260,
     "start": 14,
     "end": 38
   },
-  "62b87f8965a28519": {
-    "json_key": "Catre - denumirea autoritatii contractante",
-    "extracted_value": null,
-    "reasoning": "Text shows 'denumirea si adresa autoritaţii contractante' but asking for name part",
+  "641e0ad47f03ea21": {
+    "json_key": "Catre - denumirea autoritatii contractante si adresa completa",
+    "extracted_value": "Autoritatea Contractanta X",
+    "reasoning": "Contracting authority name and address",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 261,
     "start": 161,
     "end": 187
   },
-  "22bd6421ce0866d4": {
+  "c241b57857b4c672": {
     "json_key": "Data expirarii perioadei de valabilitate a ofertei",
     "extracted_value": null,
-    "reasoning": "Text explicitly mentions 'data expirării perioadei de valabilitate a ofertei'",
+    "reasoning": "Offer validity expiration date",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 262,
     "start": 51,
     "end": 69
   },
-  "f1434612619b9bfb": {
+  "7b8a05706f65dd90": {
     "json_key": "Data completarii",
     "extracted_value": null,
-    "reasoning": "Shows 'Data completării' field",
+    "reasoning": "Date of completion",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 267,
     "start": 16,
     "end": 38
   },
-  "1a6c4b223d906e6e": {
+  "d20aad8e2f3e6e9a": {
     "json_key": "Numele in clar al persoanei autorizate",
     "extracted_value": null,
-    "reasoning": "Legal representative name in clear",
+    "reasoning": "Clear name of legal representative",
     "confidence": 0.8,
     "source": "llm_page_ks",
     "para_index": 282,
     "start": 169,
     "end": 182
   },
-  "7f6edd7426ff820d": {
+  "0808edb0b8e3f2b1": {
     "json_key": "Semnatura autorizata",
     "extracted_value": null,
-    "reasoning": "Authorized signature field",
-    "confidence": 0.8,
+    "reasoning": "Authorized signature",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 284,
     "start": 15,
     "end": 37
   },
-  "9e0571b8ed0289c9": {
+  "ef665ceebd1c97cf": {
     "json_key": "Operator economic - denumirea / numele, adresa, telefon, fax",
     "extracted_value": null,
-    "reasoning": "Form 6 header identical to Form 5",
+    "reasoning": "Complete economic operator details",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 290,
     "start": 0,
     "end": 32
   },
-  "84a8f1e451b58063": {
-    "json_key": "Denumirea / numele candidatului / ofertantului",
+  "f7a8a8a736e74bb1": {
+    "json_key": "Denumirea / numele si sediul / adresa candidatului / ofertantului",
     "extracted_value": null,
-    "reasoning": "Text shows 'denumirea/numele şi sediul/adresa candidatului/ofertantului' but asking for name part",
-    "confidence": 0.9,
+    "reasoning": "Name and address of candidate/offeror",
+    "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 296,
     "start": 42,
     "end": 101
   },
-  "b5c8721acbbe0f39": {
-    "json_key": "Catre - denumirea autoritatii contractante",
+  "5574df8e8675df70": {
+    "json_key": "Catre - denumirea autoritatii contractante si adresa completa",
     "extracted_value": null,
-    "reasoning": "Text shows 'denumirea şi adresa autorităţii contractante' but asking for name part",
+    "reasoning": "Contracting authority name and address",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 298,
     "start": 161,
     "end": 226
   },
-  "d135cad926026868": {
+  "468a38e3caa13dc4": {
     "json_key": "Data completarii",
     "extracted_value": null,
-    "reasoning": "Completion date field",
+    "reasoning": "Date of completion",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 0,
     "start": 16,
     "end": 38
   },
-  "e28d3a5df37359db": {
+  "3f44ff0d0ff0e26a": {
     "json_key": "Semnatura autorizata",
     "extracted_value": null,
-    "reasoning": "Economic operator signature",
+    "reasoning": "Authorized signature",
     "confidence": 0.8,
     "source": "llm_page_ks",
     "para_index": 1,
     "start": 74,
     "end": 106
   },
-  "4602c1ec98696d69": {
+  "e15efc07d28aad44": {
     "json_key": "Data completarii",
     "extracted_value": null,
-    "reasoning": "Another completion date field",
+    "reasoning": "Date of completion",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 2,
     "start": 16,
     "end": 38
   },
-  "2e8a45ef6f219392": {
+  "612d767b86e1623e": {
     "json_key": "Semnatura autorizata",
     "extracted_value": null,
-    "reasoning": "Another economic operator signature",
+    "reasoning": "Authorized signature",
     "confidence": 0.8,
     "source": "llm_page_ks",
     "para_index": 3,
     "start": 74,
     "end": 106
   },
-  "bc7b045ff85bc842": {
+  "fd0ef6add62933eb": {
     "json_key": "Catre - denumirea autoritatii contractante si adresa completa",
     "extracted_value": null,
-    "reasoning": "Text explicitly asks for contracting authority name and complete address",
+    "reasoning": "Contracting authority name and complete address",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 323,
     "start": 6,
     "end": 49
   },
-  "e0cae449b307ee97": {
+  "15d719a3eb5570cf": {
     "json_key": "Denumirea contractului",
     "extracted_value": null,
-    "reasoning": "Text shows 'denumirea contractului'",
-    "confidence": 0.9,
+    "reasoning": "Contract name",
+    "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 326,
     "start": 46,
     "end": 78
   },
-  "4045d768fefff7b7": {
-    "json_key": "Operator economic - denumirea / numele",
-    "extracted_value": null,
-    "reasoning": "Contractor name in guarantee context",
-    "confidence": 0.8,
-    "source": "llm_page_ks",
-    "para_index": 328,
-    "start": 15,
-    "end": 33
-  },
-  "7d8e88eba188fc6e": {
-    "json_key": "Catre - denumirea autoritatii contractante",
-    "extracted_value": null,
-    "reasoning": "Purchaser/contracting authority name",
-    "confidence": 0.8,
-    "source": "llm_page_ks",
-    "para_index": 328,
-    "start": 67,
-    "end": 85
-  },
-  "3f240eb7c0318ed1": {
+  "4b600530e33ced7d": {
     "json_key": "Resurse tehnice / profesionale puse la dispozitie",
     "extracted_value": null,
     "reasoning": "fallback: Placeholder appears in context about putting technical/professional resources at disposal, matching exactly with this key",
@@ -705,47 +659,77 @@
     "start": 201,
     "end": 316
   },
-  "1d8ebec8b9b73a8b": {
-    "json_key": "Denumirea bancii / societatii de asigurari",
+  "03e38bafdd03cb78": {
+    "json_key": "Operator economic - denumirea / numele",
     "extracted_value": null,
-    "reasoning": "fallback: Placeholder appears under 'BANCA' section with '(denumirea)' label, clearly asking for bank name",
+    "reasoning": "fallback: Placeholder follows 'reprezentant împuternicit al' and precedes description of economic operator's name and address",
     "confidence": 0.9,
+    "source": "llm_fallback",
+    "para_index": 259,
+    "start": 104,
+    "end": 136
+  },
+  "380f6ac3124f9195": {
+    "json_key": "Banca / societate de asigurare - denumirea",
+    "extracted_value": null,
+    "reasoning": "fallback: Placeholder appears under 'BANCA' section with label 'denumirea', clearly for bank name",
+    "confidence": 0.95,
     "source": "llm_fallback",
     "para_index": 311,
     "start": 4,
     "end": 23
   },
-  "97df6eaae544433f": {
+  "77adb0cc4613c501": {
+    "json_key": "Contractant",
+    "extracted_value": null,
+    "reasoning": "fallback: Placeholder appears in contract clause 'încheiat între [placeholder], în calitate de contractant'",
+    "confidence": 0.9,
+    "source": "llm_fallback",
+    "para_index": 328,
+    "start": 15,
+    "end": 33
+  },
+  "4c2382cdb0f4a311": {
+    "json_key": "Achizitor",
+    "extracted_value": null,
+    "reasoning": "fallback: Placeholder appears in contract clause after 'şi [placeholder], în calitate de achizitor'",
+    "confidence": 0.9,
+    "source": "llm_fallback",
+    "para_index": 328,
+    "start": 67,
+    "end": 85
+  },
+  "4fcc8a475e1fbfff": {
     "json_key": "Suma din valoarea contractului",
     "extracted_value": null,
-    "reasoning": "fallback: Placeholder in context 'până la concurenţa sumei de' refers to the sum amount, separate from the percentage that follows",
+    "reasoning": "fallback: Placeholder appears in 'până la concurenţa sumei de [placeholder]' context, representing the sum amount",
     "confidence": 0.85,
     "source": "llm_fallback",
     "para_index": 328,
     "start": 203,
     "end": 216
   },
-  "5138897a98dc7479": {
+  "12e0f099a6b60aa0": {
     "json_key": "Procent din valoarea contractului",
     "extracted_value": null,
-    "reasoning": "fallback: Placeholder followed by '% din valoarea contractului' clearly indicates percentage value",
+    "reasoning": "fallback: Placeholder appears before '% din valoarea contractului', clearly representing the percentage value",
     "confidence": 0.9,
     "source": "llm_fallback",
     "para_index": 328,
     "start": 230,
     "end": 236
   },
-  "b98ef14d2b681852": {
+  "4fbfd11feeee165c": {
     "json_key": "Valabila pana la data",
     "extracted_value": null,
-    "reasoning": "Placeholder follows 'valabilă până la data de' - matches 'Valabila pana la data' key exactly",
+    "reasoning": "Placeholder follows 'valabilă până la data de' - exact match with 'Valabila pana la data' key",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 330,
     "start": 48,
     "end": 68
   },
-  "c13905e72149304b": {
+  "cbb1c294d8306ba0": {
     "json_key": "Banca / societate de asigurare - denumirea",
     "extracted_value": null,
     "reasoning": "Placeholder follows 'Parafată de Banca / societate de asigurare' - needs the bank/insurance company name",
@@ -755,227 +739,257 @@
     "start": 43,
     "end": 53
   },
-  "53f83ed141304ed5": {
+  "6afc9829c4d9824b": {
     "json_key": "Parafata de banca - zi",
     "extracted_value": null,
-    "reasoning": "First placeholder in date sequence 'în ziua ... luna ... anul' - represents day component",
+    "reasoning": "First placeholder in date sequence 'în ziua ... luna ... anul' - corresponds to day component",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 332,
     "start": 62,
     "end": 68
   },
-  "d27f69f7cdcca820": {
+  "0c08a869f5b15134": {
     "json_key": "Parafata de banca - luna",
     "extracted_value": null,
-    "reasoning": "Second placeholder in date sequence after 'luna' - represents month component",
+    "reasoning": "Second placeholder in date sequence after 'luna' - corresponds to month component",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 332,
     "start": 74,
     "end": 82
   },
-  "1d4d334e21057fef": {
+  "0cacafd53493caa1": {
     "json_key": "Parafata de banca - an",
     "extracted_value": null,
-    "reasoning": "Third placeholder in date sequence after 'anul' - represents year component",
+    "reasoning": "Third placeholder in date sequence after 'anul' - corresponds to year component",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 332,
     "start": 88,
     "end": 93
   },
-  "bce35f1a0139fcb4": {
+  "1e7ea6271c666af9": {
     "json_key": "Asociat 1 - denumire, sediu, telefon",
     "extracted_value": null,
-    "reasoning": "First party in association agreement, matches composite format requested in parentheses",
+    "reasoning": "First party in association agreement, matches composite format requested",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 359,
     "start": 0,
     "end": 23
   },
-  "05e7775cd2fb4ab6": {
+  "c71df91b0f3004fc": {
     "json_key": "Asociat 1 - reprezentant",
     "extracted_value": null,
-    "reasoning": "Representative of first party, follows 'reprezentată prin' pattern",
-    "confidence": 0.8,
+    "reasoning": "Representative of first associate",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 359,
     "start": 43,
     "end": 75
   },
-  "0c033e028949335f": {
+  "090169501df8820a": {
     "json_key": "Asociat 1 - calitate",
     "extracted_value": null,
-    "reasoning": "Role/capacity of first party representative, follows 'în calitate de' pattern",
-    "confidence": 0.8,
+    "reasoning": "Role/capacity of first associate's representative",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 359,
     "start": 94,
     "end": 121
   },
-  "1720dd5ee2e57954": {
+  "7bc846aa44ae2eff": {
     "json_key": "Asociat 2 - denumire, sediu, telefon",
     "extracted_value": null,
-    "reasoning": "Second party in association agreement, matches composite format requested in parentheses",
+    "reasoning": "Second party in association agreement, matches composite format requested",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 362,
     "start": 0,
     "end": 24
   },
-  "40251572bf5b1bd1": {
+  "ba2fad5c3999545b": {
     "json_key": "Asociat 2 - reprezentant",
     "extracted_value": null,
-    "reasoning": "Representative of second party, follows 'reprezentată prin' pattern",
-    "confidence": 0.8,
+    "reasoning": "Representative of second associate",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 362,
     "start": 43,
     "end": 74
   },
-  "6b87247000bbddf0": {
+  "3986f78fa41c07a2": {
     "json_key": "Asociat 2 - calitate",
     "extracted_value": null,
-    "reasoning": "Role/capacity of second party representative, follows 'în calitate de' pattern",
+    "reasoning": "Role/capacity of second associate's representative",
     "confidence": 0.8,
     "source": "llm_page_ks",
     "para_index": 362,
     "start": 92,
     "end": 118
   },
-  "3ed1e845a74beecc": {
+  "ebe030bf39a3a4be": {
     "json_key": "Autoritate contractanta",
     "extracted_value": null,
     "reasoning": "Contracting authority organizing the procurement procedure",
-    "confidence": 0.9,
+    "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 367,
     "start": 64,
     "end": 132
   },
-  "66f8e54c44ef0ec6": {
+  "2657138b446391c7": {
     "json_key": "Obiectul contractului",
     "extracted_value": null,
-    "reasoning": "Object/subject of the framework agreement contract",
-    "confidence": 0.9,
+    "reasoning": "Object/subject of the contract",
+    "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 367,
     "start": 201,
     "end": 287
   },
-  "ebbe0cd0439f3b1d": {
+  "0aaca2b174c4e73d": {
     "json_key": "Activitati comune - 1",
     "extracted_value": null,
     "reasoning": "First common activity in numbered list",
-    "confidence": 0.8,
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 370,
     "start": 3,
     "end": 38
   },
-  "145b0e3b0dadbaa8": {
+  "d0323db4f8056e99": {
     "json_key": "Activitati comune - 2",
     "extracted_value": null,
     "reasoning": "Second common activity in numbered list",
-    "confidence": 0.8,
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 371,
     "start": 3,
     "end": 38
   },
-  "518fba7e6edb1b58": {
+  "042331d59d50ea9e": {
+    "json_key": "Contributie parte 1 - procent",
+    "extracted_value": null,
+    "reasoning": "First party's contribution percentage",
+    "confidence": 0.9,
+    "source": "llm_page_ks",
+    "para_index": 374,
+    "start": 3,
+    "end": 10
+  },
+  "f54bd8e372e64915": {
+    "json_key": "Contributie parte 1 - denumire",
+    "extracted_value": null,
+    "reasoning": "First party's company name for contribution",
+    "confidence": 0.9,
+    "source": "llm_page_ks",
+    "para_index": 374,
+    "start": 18,
+    "end": 45
+  },
+  "e28d57bad2d9b313": {
     "json_key": "Contributie parte 2 - procent",
     "extracted_value": null,
-    "reasoning": "Contribution percentage for second party in numbered list",
-    "confidence": 0.8,
+    "reasoning": "Second party's contribution percentage",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 375,
     "start": 3,
     "end": 10
   },
-  "0d7c7a8becb49d85": {
+  "0e516273277b9a18": {
     "json_key": "Contributie parte 2 - denumire",
     "extracted_value": null,
-    "reasoning": "Company name for second party contribution",
-    "confidence": 0.8,
+    "reasoning": "Second party's company name for contribution",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 375,
     "start": 18,
     "end": 45
   },
-  "2c56f13fef1f952a": {
+  "830fd5c93e2aa56a": {
     "json_key": "Repartizare beneficii / pierderi parte 1 - procent",
     "extracted_value": null,
-    "reasoning": "Benefits/losses distribution percentage for first party",
-    "confidence": 0.8,
+    "reasoning": "First party's benefit/loss distribution percentage",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 377,
     "start": 3,
     "end": 10
   },
-  "cf667c6280edd8a3": {
+  "6ae2335ba27cab02": {
+    "json_key": "Repartizare beneficii / pierderi parte 1 - denumire",
+    "extracted_value": null,
+    "reasoning": "First party's company name for benefit/loss distribution",
+    "confidence": 0.9,
+    "source": "llm_page_ks",
+    "para_index": 377,
+    "start": 18,
+    "end": 45
+  },
+  "903a376111a7d547": {
     "json_key": "Repartizare beneficii / pierderi parte 2 - procent",
     "extracted_value": null,
-    "reasoning": "Benefits/losses distribution percentage for second party",
-    "confidence": 0.8,
+    "reasoning": "Second party's benefit/loss distribution percentage",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 378,
     "start": 3,
     "end": 10
   },
-  "85a7dee68ea3e578": {
+  "a812ace54130839d": {
     "json_key": "Repartizare beneficii / pierderi parte 2 - denumire",
     "extracted_value": null,
-    "reasoning": "Company name for second party benefits distribution",
-    "confidence": 0.8,
+    "reasoning": "Second party's company name for benefit/loss distribution",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 378,
     "start": 18,
     "end": 45
   },
-  "b66298e817f317b4": {
+  "26b2728be392559d": {
     "json_key": "Lider al asocierii imputernicit",
     "extracted_value": null,
-    "reasoning": "Association leader empowered for offer preparation and submission",
-    "confidence": 0.9,
+    "reasoning": "Association leader empowered for offer preparation",
+    "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 384,
     "start": 28,
     "end": 59
   },
-  "1fb80b2066fd4f68": {
+  "8182c7f122499462": {
     "json_key": "Lider al asocierii imputernicit",
     "extracted_value": null,
     "reasoning": "Association leader empowered for contract signing",
-    "confidence": 0.9,
+    "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 385,
     "start": 28,
     "end": 59
   },
-  "bc4f171d2ef2d51e": {
+  "0902f11eeeb4ea20": {
     "json_key": "Catre - denumirea autoritatii contractante si adresa completa",
     "extracted_value": null,
-    "reasoning": "Address for communications between parties",
-    "confidence": 0.7,
+    "reasoning": "Communication addresses referenced in article",
+    "confidence": 0.8,
     "source": "llm_page_ks",
     "para_index": 394,
     "start": 122,
     "end": 177
   },
-  "ac8aaf0b12bb3959": {
+  "ce526591bd829106": {
     "json_key": "Data acordului",
     "extracted_value": null,
-    "reasoning": "Date when agreement was concluded",
-    "confidence": 0.8,
+    "reasoning": "Date of agreement signing",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 402,
     "start": 115,
     "end": 142
   },
-  "ea06672bf01b23c8": {
+  "33ec724cea0e6e92": {
     "json_key": "Autoritate contractanta",
     "extracted_value": null,
     "reasoning": "Contracting authority name in signature section",
@@ -985,109 +999,79 @@
     "start": 0,
     "end": 22
   },
-  "79627cb68f5681f4": {
+  "fceb81b912ab15b7": {
     "json_key": "Asociat 1 - denumire, sediu, telefon",
     "extracted_value": null,
-    "reasoning": "First associate signature section with full details",
+    "reasoning": "Associate 1 signature section",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 410,
     "start": 0,
     "end": 19
   },
-  "71ea900da62b9932": {
+  "aed6bbfaeb3b9e40": {
     "json_key": "Asociat 2 - denumire, sediu, telefon",
     "extracted_value": null,
-    "reasoning": "Second associate signature section with full details",
+    "reasoning": "Associate 2 signature section",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 413,
     "start": 0,
     "end": 19
   },
-  "5b59dd8535d3d6cd": {
+  "6bcdd3f5bb99652d": {
     "json_key": "Semnatura autorizata",
     "extracted_value": null,
     "reasoning": "Authorized signature for economic operator",
-    "confidence": 0.8,
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 416,
     "start": 0,
     "end": 34
   },
-  "9f73dd7476aa89ab": {
+  "a4635cdd10c83ebc": {
     "json_key": "Contributie fiecare parte (%)",
     "extracted_value": null,
-    "reasoning": "fallback: This placeholder follows the label about contribution of each party to contract fulfillment, matching the general contribution percentage key",
+    "reasoning": "fallback: This placeholder follows the label about contribution of each party to contract fulfillment, matching the key for contribution percentages",
     "confidence": 0.9,
     "source": "llm_fallback",
     "para_index": 372,
     "start": 2,
     "end": 37
   },
-  "aa28760fea7e020a": {
-    "json_key": "Contributie parte 1 - procent",
+  "80338ce3150afbce": {
+    "json_key": "Asociat 1 - sediu",
     "extracted_value": null,
-    "reasoning": "fallback: This is the first percentage field in the contribution section, specifically for part 1's percentage",
-    "confidence": 0.95,
-    "source": "llm_fallback",
-    "para_index": 374,
-    "start": 3,
-    "end": 10
-  },
-  "27abda12b14ab305": {
-    "json_key": "Contributie parte 1 - denumire",
-    "extracted_value": null,
-    "reasoning": "fallback: This placeholder appears after the percentage for part 1, positioned where the company name would go",
-    "confidence": 0.9,
-    "source": "llm_fallback",
-    "para_index": 374,
-    "start": 18,
-    "end": 45
-  },
-  "eb0e9aeaf02bc770": {
-    "json_key": "Repartizare beneficii / pierderi parte 1 - denumire",
-    "extracted_value": null,
-    "reasoning": "fallback: This is in section 2.4 about distribution of benefits/losses, positioned where the company name would go for part 1",
-    "confidence": 0.9,
-    "source": "llm_fallback",
-    "para_index": 377,
-    "start": 18,
-    "end": 45
-  },
-  "71d9ee8827a3a8e8": {
-    "json_key": null,
-    "extracted_value": null,
-    "reasoning": "fallback: This appears to reference an article number for addresses, but no matching key exists in the available options",
-    "confidence": 0.3,
+    "reasoning": "fallback: References article about addresses for communications between parties in association agreement",
+    "confidence": 0.8,
     "source": "llm_fallback",
     "para_index": 394,
     "start": 197,
     "end": 206
   },
-  "96c1cde2ebe8edd7": {
+  "40406de66a209fcf": {
     "json_key": null,
     "extracted_value": null,
-    "reasoning": "fallback: This is for 'Other clauses' content, but no matching key exists in the available options",
-    "confidence": 0.3,
+    "reasoning": "fallback: No key in the candidate list specifically matches 'Alte clauze' - this appears to be a free-form text field for additional clauses not covered by the standard keys",
+    "confidence": 0.0,
     "source": "llm_fallback",
     "para_index": 400,
     "start": 14,
     "end": 58
   },
-  "9a0b41c12bb0faf8": {
-    "json_key": null,
+  "4c2a141314da1116": {
+    "json_key": "Numar copii ale ofertei",
     "extracted_value": null,
-    "reasoning": "fallback: This is for number of agreement copies, but no matching key exists in the available options",
-    "confidence": 0.3,
+    "reasoning": "fallback: This placeholder is for the number of copies/exemplars of the agreement, which closely matches the key for number of offer copies",
+    "confidence": 0.8,
     "source": "llm_fallback",
     "para_index": 402,
     "start": 59,
     "end": 64
   },
-  "e7fdf659c9c50897": {
+  "1bdf57970e21eeba": {
     "json_key": "Nr acordului",
-    "extracted_value": "123",
+    "extracted_value": null,
     "reasoning": "Placeholder follows 'nr' in subcontracting agreement header",
     "confidence": 0.9,
     "source": "llm_page_ks",
@@ -1095,7 +1079,7 @@
     "start": 2,
     "end": 11
   },
-  "2ca8fe3665bba9dd": {
+  "b10f5eef314ca451": {
     "json_key": "Denumirea obiectivului / procedurii",
     "extracted_value": null,
     "reasoning": "Context indicates procurement procedure name",
@@ -1105,37 +1089,37 @@
     "start": 0,
     "end": 62
   },
-  "2751f3a1d470aaa2": {
+  "34c097fcf3d68dda": {
     "json_key": "Contract nr",
     "extracted_value": null,
-    "reasoning": "Contract number in 'la contractul nr.' phrase",
+    "reasoning": "Follows 'contractul nr.' in the document",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 438,
     "start": 19,
     "end": 34
   },
-  "982ab93b05b4758e": {
-    "json_key": "Catre - denumirea autoritatii contractante",
+  "578c182b0a34515c": {
+    "json_key": "Contract parti contractante",
     "extracted_value": null,
-    "reasoning": "First contracting party in contract between X and Y structure",
-    "confidence": 0.8,
+    "reasoning": "First contracting party in the main contract",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 438,
     "start": 50,
     "end": 80
   },
-  "764acfc49c6a3ca8": {
-    "json_key": "Contractant",
+  "85ddb7a53b083e5d": {
+    "json_key": "Contract parti contractante",
     "extracted_value": null,
-    "reasoning": "Second contracting party completing the pair",
+    "reasoning": "Second contracting party, continuation of previous placeholder",
     "confidence": 0.8,
     "source": "llm_page_ks",
     "para_index": 439,
     "start": 0,
     "end": 26
   },
-  "207a642001fc5fd6": {
+  "9a16a01d670093e6": {
     "json_key": "Denumirea serviciilor",
     "extracted_value": null,
     "reasoning": "Services being provided under the contract",
@@ -1145,38 +1129,98 @@
     "start": 82,
     "end": 99
   },
-  "f716cae2562690c8": {
-    "json_key": "Sediul / adresa candidatului / ofertantului",
-    "extracted_value": null,
-    "reasoning": "Address of general contractor",
-    "confidence": 0.8,
+  "5a4386b78929d090": {
+    "json_key": "Contractant general - date",
+    "extracted_value": "SC BestBuild  SRL",
+    "reasoning": "Company name for general contractor",
+    "confidence": 0.9,
+    "source": "llm_page_ks",
+    "para_index": 443,
+    "start": 40,
+    "end": 55
+  },
+  "c70c32471e69e7c3": {
+    "json_key": "Contractant general - date",
+    "extracted_value": "Bucuresti",
+    "reasoning": "Address/headquarters of general contractor",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 443,
     "start": 69,
     "end": 95
   },
-  "21b4d01a17ad7ee1": {
-    "json_key": "Operator economic - adresa",
-    "extracted_value": null,
-    "reasoning": "Additional address/contact details for general contractor",
-    "confidence": 0.7,
+  "645a86b8b280b6d6": {
+    "json_key": "Contractant general - date",
+    "extracted_value": "0212345678, 0212345679",
+    "reasoning": "Contact details (phone, fax) for general contractor",
+    "confidence": 0.8,
     "source": "llm_page_ks",
     "para_index": 444,
     "start": 0,
     "end": 20
   },
-  "b3974617b6e9f70c": {
-    "json_key": "Adresa tertului sustinator",
-    "extracted_value": null,
-    "reasoning": "Address of subcontractor",
-    "confidence": 0.6,
+  "3761776932600dd3": {
+    "json_key": "Contractant general - date",
+    "extracted_value": "Popescu",
+    "reasoning": "General Director name from contractor data",
+    "confidence": 0.9,
+    "source": "llm_page_ks",
+    "para_index": 444,
+    "start": 58,
+    "end": 76
+  },
+  "1478bfe98fe57328": {
+    "json_key": "Contractant general - date",
+    "extracted_value": "Ionescu",
+    "reasoning": "Economic Director name from contractor data",
+    "confidence": 0.9,
+    "source": "llm_page_ks",
+    "para_index": 445,
+    "start": 0,
+    "end": 11
+  },
+  "5cc8395e4aa1b526": {
+    "json_key": "Subcontractant - date",
+    "extracted_value": "SC SubEx SRL",
+    "reasoning": "Subcontractor company name",
+    "confidence": 0.9,
+    "source": "llm_page_ks",
+    "para_index": 447,
+    "start": 5,
+    "end": 29
+  },
+  "db6a193e3ddc628b": {
+    "json_key": "Subcontractant - date",
+    "extracted_value": "Cluj",
+    "reasoning": "Subcontractor headquarters location",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 447,
     "start": 43,
     "end": 76
   },
-  "ba327c306a762107": {
-    "json_key": "Denumirea serviciilor",
+  "2421a59c0b457db2": {
+    "json_key": "Subcontractant - date",
+    "extracted_value": "Vasilescu",
+    "reasoning": "Subcontractor General Director name",
+    "confidence": 0.9,
+    "source": "llm_page_ks",
+    "para_index": 448,
+    "start": 18,
+    "end": 36
+  },
+  "acd7a554d5f45b4d": {
+    "json_key": "Subcontractant - date",
+    "extracted_value": "Matei",
+    "reasoning": "Subcontractor Economic Director name",
+    "confidence": 0.9,
+    "source": "llm_page_ks",
+    "para_index": 448,
+    "start": 57,
+    "end": 77
+  },
+  "2f29efdc42f56fcf": {
+    "json_key": "Obiect - servicii ce fac obiectul contractului",
     "extracted_value": null,
     "reasoning": "Services that are the object of the contract",
     "confidence": 0.9,
@@ -1185,37 +1229,37 @@
     "start": 7,
     "end": 28
   },
-  "4cc8a49030683240": {
+  "a700525a3ebf728d": {
     "json_key": "Obiect - servicii ce fac obiectul contractului",
     "extracted_value": null,
     "reasoning": "Continuation of services description",
-    "confidence": 0.8,
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 452,
     "start": 70,
     "end": 87
   },
-  "8537ae308e8f2ced": {
+  "585ed61849c2cad8": {
     "json_key": "Obiect - servicii 1",
     "extracted_value": null,
-    "reasoning": "First specific service item",
+    "reasoning": "First specific service type",
     "confidence": 0.8,
     "source": "llm_page_ks",
     "para_index": 454,
     "start": 0,
     "end": 20
   },
-  "f3d0b9ba94a490ff": {
+  "4d95bf3ae8068323": {
     "json_key": "Obiect - servicii 2",
     "extracted_value": null,
-    "reasoning": "Second specific service item",
+    "reasoning": "Second specific service type",
     "confidence": 0.8,
     "source": "llm_page_ks",
     "para_index": 455,
     "start": 0,
     "end": 20
   },
-  "5efb3cc85e514da9": {
+  "62281737dac0594f": {
     "json_key": "Valoare servicii conform ofertei",
     "extracted_value": null,
     "reasoning": "Value of services according to offer",
@@ -1225,9 +1269,9 @@
     "start": 17,
     "end": 39
   },
-  "b192316659533170": {
+  "96f359ef7e9004b4": {
     "json_key": "Valabilitate oferta - ... zile (in litere si cifre)",
-    "extracted_value": "90 (nouazeci)",
+    "extracted_value": "90",
     "reasoning": "Payment term in days",
     "confidence": 0.8,
     "source": "llm_page_ks",
@@ -1235,27 +1279,27 @@
     "start": 22,
     "end": 29
   },
-  "564cb0dba48f209d": {
+  "71b924702eb35c9a": {
     "json_key": "Denumirea serviciilor",
     "extracted_value": null,
-    "reasoning": "Services provided in respective period",
+    "reasoning": "Services provided in the respective period",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 462,
     "start": 138,
     "end": 157
   },
-  "a73a6dcb68cbfbf9": {
+  "34f6a624191dcbce": {
     "json_key": "Denumirea serviciilor",
     "extracted_value": null,
-    "reasoning": "Services payment context",
+    "reasoning": "Payment of services",
     "confidence": 0.8,
     "source": "llm_page_ks",
     "para_index": 464,
     "start": 8,
     "end": 35
   },
-  "7ae641083f7fb04f": {
+  "e91409daad24c67e": {
     "json_key": "Denumirea serviciilor",
     "extracted_value": null,
     "reasoning": "Services financing context",
@@ -1265,39 +1309,39 @@
     "start": 79,
     "end": 101
   },
-  "a177dce2ddd3385b": {
+  "694d3f07ad8cb9e7": {
     "json_key": "Denumirea serviciilor",
     "extracted_value": null,
-    "reasoning": "Services by beneficiary context",
+    "reasoning": "Services provided by beneficiary",
     "confidence": 0.8,
     "source": "llm_page_ks",
     "para_index": 466,
     "start": 0,
     "end": 28
   },
-  "ec4d8062eb233bef": {
-    "json_key": "Catre - denumirea autoritatii contractante",
+  "8bae0e649fedf7ee": {
+    "json_key": "Autoritate contractanta",
     "extracted_value": null,
-    "reasoning": "Beneficiary/contracting authority name",
+    "reasoning": "Contracting authority as beneficiary",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 466,
     "start": 51,
     "end": 77
   },
-  "5f5b6d7123ab2095": {
+  "024c22ad52f2c113": {
     "json_key": "Denumirea serviciilor",
     "extracted_value": null,
-    "reasoning": "Services execution duration context",
+    "reasoning": "Services execution duration",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 469,
     "start": 28,
     "end": 71
   },
-  "bb89eacf1d459b72": {
+  "9cfb30fcad2e9ddf": {
     "json_key": "Durata garantiei de buna executie (luni)",
-    "extracted_value": "12",
+    "extracted_value": null,
     "reasoning": "Good execution guarantee duration in months",
     "confidence": 0.9,
     "source": "llm_page_ks",
@@ -1305,7 +1349,7 @@
     "start": 49,
     "end": 53
   },
-  "686fe8e3ea740458": {
+  "a2516af7e87861fc": {
     "json_key": "Denumirea serviciilor",
     "extracted_value": null,
     "reasoning": "Services completion context",
@@ -1315,19 +1359,19 @@
     "start": 130,
     "end": 163
   },
-  "4ff75bae82c060b5": {
+  "448a3a7953774c40": {
     "json_key": "Denumirea serviciilor",
     "extracted_value": null,
-    "reasoning": "Services finalization deadline context",
+    "reasoning": "Services finalization deadline",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 478,
     "start": 55,
     "end": 97
   },
-  "682f96fb62273f5d": {
+  "8fa6198568bbe7be": {
     "json_key": "Penalitati subcontractant (%)",
-    "extracted_value": "0.1% pe zi intarziere",
+    "extracted_value": null,
     "reasoning": "Subcontractor penalty percentage",
     "confidence": 0.9,
     "source": "llm_page_ks",
@@ -1335,7 +1379,7 @@
     "start": 166,
     "end": 172
   },
-  "d3677affef9d29c7": {
+  "55228f93a1936d53": {
     "json_key": "Denumirea serviciilor",
     "extracted_value": null,
     "reasoning": "Services value not realized on time",
@@ -1345,9 +1389,9 @@
     "start": 204,
     "end": 233
   },
-  "16d48fb95c9b4f72": {
+  "1e7ccb870d30773d": {
     "json_key": "Penalitati contractant general (%)",
-    "extracted_value": "0.05% pe zi intarziere",
+    "extracted_value": null,
     "reasoning": "General contractor penalty percentage",
     "confidence": 0.9,
     "source": "llm_page_ks",
@@ -1355,7 +1399,7 @@
     "start": 108,
     "end": 113
   },
-  "071c9e0f1f0a7b2c": {
+  "69b1a472dbea4137": {
     "json_key": "Denumirea contractului",
     "extracted_value": null,
     "reasoning": "Contract name reference",
@@ -1365,7 +1409,7 @@
     "start": 182,
     "end": 213
   },
-  "02bbd89d905e1cc6": {
+  "5e6d0338baf55e29": {
     "json_key": "Denumirea bancii / societatii de asigurari",
     "extracted_value": null,
     "reasoning": "Bank name in guarantee letter",
@@ -1375,7 +1419,7 @@
     "start": 4,
     "end": 23
   },
-  "2ad9691b2d04e5d2": {
+  "596e63bfb4979999": {
     "json_key": "Catre - denumirea autoritatii contractante si adresa completa",
     "extracted_value": null,
     "reasoning": "Contracting authority name and complete address",
@@ -1385,7 +1429,7 @@
     "start": 6,
     "end": 49
   },
-  "bea34cb0ab057244": {
+  "46b3cc27098e105c": {
     "json_key": "Denumirea obiectivului / procedurii",
     "extracted_value": null,
     "reasoning": "Objective/procedure name to be completed",
@@ -1395,357 +1439,297 @@
     "start": 71,
     "end": 109
   },
-  "b8e0da6d1dc8d72f": {
-    "json_key": "Contractant general - date",
+  "27193191f0a1435c": {
+    "json_key": "Catre - denumirea autoritatii contractante",
     "extracted_value": null,
-    "reasoning": "fallback: First company name in subcontracting agreement, identified as the general contractor",
+    "reasoning": "fallback: First blank in 'Către' section for authority name, followed by address line",
     "confidence": 0.9,
-    "source": "llm_fallback",
-    "para_index": 443,
-    "start": 40,
-    "end": 55
-  },
-  "a6ad9d22ec533d6e": {
-    "json_key": "Reprezentat prin - nume",
-    "extracted_value": null,
-    "reasoning": "fallback: Name of the General Director representing the general contractor",
-    "confidence": 0.95,
-    "source": "llm_fallback",
-    "para_index": 444,
-    "start": 58,
-    "end": 76
-  },
-  "b1fae8b5a7a7335e": {
-    "json_key": "Reprezentat prin - nume",
-    "extracted_value": null,
-    "reasoning": "fallback: Name of the Economic Director representing the general contractor",
-    "confidence": 0.9,
-    "source": "llm_fallback",
-    "para_index": 445,
-    "start": 0,
-    "end": 11
-  },
-  "4648af808437ef22": {
-    "json_key": "Subcontractant - date",
-    "extracted_value": null,
-    "reasoning": "fallback: Company name of the subcontractor in the agreement",
-    "confidence": 0.9,
-    "source": "llm_fallback",
-    "para_index": 447,
-    "start": 5,
-    "end": 29
-  },
-  "18ebf2b6bb12431f": {
-    "json_key": "Reprezentat prin - nume",
-    "extracted_value": null,
-    "reasoning": "fallback: Name of the General Director representing the subcontractor",
-    "confidence": 0.95,
-    "source": "llm_fallback",
-    "para_index": 448,
-    "start": 18,
-    "end": 36
-  },
-  "7930b27dfba90c60": {
-    "json_key": "Reprezentat prin - nume",
-    "extracted_value": null,
-    "reasoning": "fallback: Name of the Economic Director representing the subcontractor",
-    "confidence": 0.9,
-    "source": "llm_fallback",
-    "para_index": 448,
-    "start": 57,
-    "end": 77
-  },
-  "d52a417fb06ca4c4": {
-    "json_key": "Data",
-    "extracted_value": null,
-    "reasoning": "fallback: Date field in the contract signature area",
-    "confidence": 0.8,
     "source": "llm_fallback",
     "para_index": 494,
     "start": 0,
     "end": 17
   },
-  "854314f8f8d04f44": {
-    "json_key": "Data",
+  "e3deb16a9e67e1b2": {
+    "json_key": "Catre - adresa completa",
     "extracted_value": null,
-    "reasoning": "fallback: Second date field in the contract signature area",
-    "confidence": 0.8,
+    "reasoning": "fallback: Second blank after authority name, before explanatory text about complete address",
+    "confidence": 0.9,
     "source": "llm_fallback",
     "para_index": 494,
     "start": 84,
     "end": 101
   },
-  "f2a531737598f839": {
+  "72083fac694fdf27": {
     "json_key": "Cod CPV",
     "extracted_value": null,
-    "reasoning": "fallback: CPV code field explicitly mentioned in the context",
+    "reasoning": "fallback: Explicitly labeled as 'cod CPV' in the contract procedure description",
     "confidence": 1.0,
     "source": "llm_fallback",
     "para_index": 514,
     "start": 162,
     "end": 189
   },
-  "2c7ca5971f650776": {
+  "eee8ac6b39a20fbe": {
     "json_key": "Catre - denumirea autoritatii contractante si adresa completa",
     "extracted_value": null,
-    "reasoning": "Context shows this placeholder follows 'organizată de' referring to the contracting authority",
+    "reasoning": "Context shows this follows 'organizată de' referring to the contracting authority",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 514,
     "start": 204,
     "end": 243
   },
-  "a7a509eb97a46b54": {
+  "55751342417b245c": {
     "json_key": "Denumirea bancii / societatii de asigurari",
     "extracted_value": null,
-    "reasoning": "Placeholder follows 'noi,' and precedes 'având sediul înregistrat la' - clearly the bank/insurance company name",
+    "reasoning": "Follows 'noi,' and precedes 'având sediul înregistrat la' - clearly the bank name",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 514,
     "start": 288,
     "end": 341
   },
-  "1c14cb9eaf13d975": {
+  "fc923b4dd4ad38ce": {
     "json_key": "Adresa bancii / societatii de asigurari",
     "extracted_value": null,
-    "reasoning": "Placeholder follows '(adresa bãncii/societãții de asigurãri)' - clearly the bank/insurance company address",
+    "reasoning": "Follows bank name and is labeled as bank/insurance company address",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 516,
     "start": 0,
     "end": 28
   },
-  "65263ce3736c1f49": {
+  "207cc8687c739b04": {
     "json_key": "Catre - denumirea autoritatii contractante si adresa completa",
     "extracted_value": null,
-    "reasoning": "Context 'față de [placeholder]' indicates the contracting authority the guarantee is made to",
+    "reasoning": "Context 'față de [authority]' - refers to the contracting authority",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 519,
     "start": 55,
     "end": 60
   },
-  "d448eced58e404ef": {
+  "4797d96d5ea55701": {
     "json_key": "Suma de ... lei (in litere si cifre)",
     "extracted_value": null,
-    "reasoning": "Follows 'să plãtim suma de (în litere și în cifre)' - clearly the guarantee amount",
+    "reasoning": "Follows 'să plătim suma de (în litere și în cifre)' - guarantee amount",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 519,
     "start": 103,
     "end": 129
   },
-  "b5d3644d945222ea": {
+  "edf6e64abb0e4d20": {
     "json_key": "Denumirea / numele ofertantului",
     "extracted_value": null,
-    "reasoning": "First occurrence in guarantee conditions, follows '(numele complet al Ofertantului, iar în cazul asocierii denumirea asocierii)'",
+    "reasoning": "First occurrence of 'ofertantul [name]' in the conditions list",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 522,
     "start": 14,
     "end": 40
   },
-  "c3f6d4b2ac8636ca": {
+  "c883f13a429b44fc": {
     "json_key": "Denumirea / numele ofertantului",
     "extracted_value": null,
-    "reasoning": "Second occurrence in guarantee conditions, same context as previous",
+    "reasoning": "Second occurrence of 'ofertantul [name]' in the conditions list",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 524,
     "start": 54,
     "end": 82
   },
-  "30c5c4471f9809fd": {
+  "d70a339f27f9a18b": {
     "json_key": "Denumirea / numele ofertantului",
     "extracted_value": null,
-    "reasoning": "Third occurrence in guarantee conditions, same context pattern",
+    "reasoning": "Third occurrence of 'ofertantul [name]' in the conditions list",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 527,
     "start": 54,
     "end": 83
   },
-  "b4aea2110ed506bd": {
+  "9d33bdea9bbc14e1": {
     "json_key": "Valabila pana la data",
     "extracted_value": null,
-    "reasoning": "Follows 'Prezenta garanție este valabila pana la data de' - guarantee validity date",
+    "reasoning": "Follows 'valabilă până la data de' - guarantee validity date",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 530,
     "start": 47,
     "end": 60
   },
-  "c6a025620d9bb8cd": {
+  "44a716eb1e3c3ecc": {
     "json_key": "Banca / societate de asigurare - denumirea",
     "extracted_value": null,
-    "reasoning": "Context 'Parafata de Banca [placeholder]' indicates bank name for signature",
+    "reasoning": "Context 'Parafată de Banca [name]' - bank name for signature",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 534,
     "start": 18,
     "end": 31
   },
-  "336fc17c9d8a618d": {
+  "2922c5a83e3a809d": {
     "json_key": "Parafata de banca - zi",
     "extracted_value": null,
-    "reasoning": "First in sequence 'in ziua [zi] luna [luna] anul [an]' - day component",
+    "reasoning": "First date component after 'în ziua' - day",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 534,
     "start": 40,
     "end": 46
   },
-  "e7ed3733a28a4a7b": {
+  "aaa99f9aadfe67f0": {
     "json_key": "Parafata de banca - luna",
     "extracted_value": null,
-    "reasoning": "Second in sequence 'in ziua [zi] luna [luna] anul [an]' - month component",
+    "reasoning": "Second date component after 'luna' - month",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 534,
     "start": 52,
     "end": 60
   },
-  "3e927fbcb572dc01": {
+  "d251a652234de352": {
     "json_key": "Parafata de banca - an",
     "extracted_value": null,
-    "reasoning": "Third in sequence 'in ziua [zi] luna [luna] anul [an]' - year component",
+    "reasoning": "Third date component after 'anul' - year",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 534,
     "start": 66,
     "end": 70
   },
-  "b2679715c4953e8d": {
+  "8101ad93f273486c": {
     "json_key": "Nume / denumire ofertant",
     "extracted_value": null,
-    "reasoning": "Follows '(denumirea)' in signature section - company name for authorization",
-    "confidence": 0.9,
+    "reasoning": "Under '(denumirea)' section, likely company name",
+    "confidence": 0.8,
     "source": "llm_page_ks",
     "para_index": 536,
     "start": 0,
     "end": 22
   },
-  "50a4bc21867e0e4f": {
+  "c2332f61a8e3f77e": {
     "json_key": "Nume / denumire ofertant",
     "extracted_value": null,
-    "reasoning": "Follows 'Subscrisa' in authorization section - the authorizing company name",
+    "reasoning": "Start of authorization section 'Subscrisa [name]' - company name",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 542,
     "start": 10,
     "end": 36
   },
-  "0b71bf535e94ecaf": {
+  "1ddbf2d145825217": {
     "json_key": "Operator economic - adresa",
     "extracted_value": null,
-    "reasoning": "Follows 'cu sediul în' - company address in authorization",
+    "reasoning": "Follows 'cu sediul în' - company address",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 542,
     "start": 67,
     "end": 80
   },
-  "84d9c54a2e9af3f1": {
+  "fce47d5a6a0c4150": {
     "json_key": "Denumirea obiectivului / procedurii",
     "extracted_value": null,
-    "reasoning": "Follows '(se va completa cu denumirea obiectivului)' - procedure objective name",
+    "reasoning": "Context 'procedura de atribuire [name]' - procedure name",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 542,
     "start": 552,
     "end": 578
   },
-  "09c9a79f0390988c": {
+  "d5a3a1ca943ca13e": {
     "json_key": "Catre - denumirea autoritatii contractante",
     "extracted_value": null,
-    "reasoning": "Follows 'organizată de' - contracting authority organizing the procedure",
+    "reasoning": "Context 'organizată de [authority]' - contracting authority",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 542,
     "start": 635,
     "end": 654
   },
-  "56ed837849ab4e10": {
+  "e607d86b25154da4": {
     "json_key": "Data completarii",
     "extracted_value": null,
-    "reasoning": "Follows 'Data completării' - form completion date",
+    "reasoning": "Standard 'Data completării' field - completion date",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 551,
     "start": 17,
     "end": 45
   },
-  "572bfd76e9719b1f": {
+  "275e8fd0c030c06f": {
     "json_key": "Nume / denumire ofertant",
     "extracted_value": null,
-    "reasoning": "In signature section under 'Ofertant,' - bidder company name",
-    "confidence": 0.95,
+    "reasoning": "Under 'Ofertant,' section - company name",
+    "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 553,
     "start": 6,
     "end": 62
   },
-  "ca6586385d07cdf3": {
+  "4f599e7a8b7db12d": {
     "json_key": "Reprezentata legal prin (nume si prenume)",
     "extracted_value": null,
-    "reasoning": "Follows 'reprezentată legal prin' - legal representative name and signature",
+    "reasoning": "Context 'reprezentată legal prin' - legal representative",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 555,
     "start": 30,
     "end": 73
   },
-  "5080562ef797452a": {
+  "eaf89628c37d9e67": {
     "json_key": "OPERATOR ECONOMIC - denumirea / numele",
     "extracted_value": null,
-    "reasoning": "Under 'OPERATORUL ECONOMIC' section header - economic operator name",
+    "reasoning": "Under 'OPERATORUL ECONOMIC' section - economic operator name",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 1,
     "start": 0,
     "end": 19
   },
-  "c7c72da77b03faf3": {
+  "c915ad74adf78332": {
     "json_key": "Nr inregistrare la sediul autoritatii contractante",
     "extracted_value": null,
-    "reasoning": "First registration number field - registration number at contracting authority",
+    "reasoning": "Registration number at contracting authority - first occurrence",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 0,
     "start": 54,
     "end": 63
   },
-  "7f0438ac9b42778f": {
+  "53eac3280924d277": {
     "json_key": "Data",
     "extracted_value": null,
-    "reasoning": "Second registration date field - registration date at contracting authority",
-    "confidence": 0.9,
+    "reasoning": "Registration date at contracting authority - second occurrence",
+    "confidence": 0.8,
     "source": "llm_page_ks",
     "para_index": 0,
     "start": 67,
     "end": 78
   },
-  "06116c24d82cf15c": {
+  "6e862bf781080fcd": {
     "json_key": "Ora",
     "extracted_value": null,
-    "reasoning": "Third registration time field - registration time at contracting authority",
-    "confidence": 0.9,
+    "reasoning": "Registration time at contracting authority - third occurrence",
+    "confidence": 0.8,
     "source": "llm_page_ks",
     "para_index": 0,
     "start": 81,
     "end": 86
   },
-  "c2f6dc40119c140a": {
+  "5fb94895b2b47950": {
     "json_key": "Catre - denumirea autoritatii contractante si adresa completa",
     "extracted_value": null,
-    "reasoning": "Follows 'Către' in cover letter header - contracting authority name and address",
+    "reasoning": "Start of forwarding letter 'Către [authority]' - contracting authority",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 577,
     "start": 6,
     "end": 38
   },
-  "94ea7c4b8cd3206a": {
+  "48679ac89444b338": {
     "json_key": "CIF",
     "extracted_value": null,
     "reasoning": "fallback: Placeholder appears after 'CIF' in company registration details",
@@ -1755,7 +1739,7 @@
     "start": 165,
     "end": 172
   },
-  "fde5a69baec0513c": {
+  "7c7ceac69ad0bf09": {
     "json_key": "Atribut fiscal",
     "extracted_value": null,
     "reasoning": "fallback: Placeholder appears after 'atribut fiscal' in company registration details",
@@ -1765,7 +1749,7 @@
     "start": 189,
     "end": 205
   },
-  "e02c3d58d79ee08b": {
+  "bb6e9bf2e603da19": {
     "json_key": "Reprezentat prin - nume",
     "extracted_value": null,
     "reasoning": "fallback: Placeholder appears after 'reprezentată prin' and before 'în calitate de', indicating the representative's name",
@@ -1775,7 +1759,7 @@
     "start": 225,
     "end": 234
   },
-  "f2bb2391a4ab2b37": {
+  "3653d58d9aa904c2": {
     "json_key": "Reprezentat prin - calitate",
     "extracted_value": null,
     "reasoning": "fallback: Placeholder appears after 'în calitate de', indicating the representative's role/position",
@@ -1785,7 +1769,7 @@
     "start": 251,
     "end": 264
   },
-  "4c9899ea7e18b57b": {
+  "f09e3761cc703dc3": {
     "json_key": "Imputernicit - nume",
     "extracted_value": null,
     "reasoning": "fallback: Placeholder appears after 'împuternicim prin prezenta pe Dl/Dna', indicating the name of the authorized person",
@@ -1795,7 +1779,7 @@
     "start": 303,
     "end": 313
   },
-  "687b56b4da98b8a6": {
+  "0ec4e2116fd4bc19": {
     "json_key": "Imputernicit - domiciliu",
     "extracted_value": null,
     "reasoning": "fallback: Placeholder appears after 'domiciliat în', indicating the domicile of the authorized person",
@@ -1805,47 +1789,47 @@
     "start": 329,
     "end": 346
   },
-  "b8ea9d59bfdfc83c": {
+  "81574e196d74f0a1": {
     "json_key": "BI / CI - numar",
     "extracted_value": null,
     "reasoning": "fallback: Placeholder appears after 'seria ……, nr.' in identity document details",
-    "confidence": 0.9,
+    "confidence": 1.0,
     "source": "llm_fallback",
     "para_index": 542,
     "start": 387,
     "end": 390
   },
-  "a68956178b94c4c7": {
+  "c05266d008aa8e68": {
     "json_key": "BI / CI - CNP",
     "extracted_value": null,
     "reasoning": "fallback: Placeholder appears after 'CNP' in identity document details",
-    "confidence": 0.9,
+    "confidence": 1.0,
     "source": "llm_fallback",
     "para_index": 542,
     "start": 396,
     "end": 407
   },
-  "8db64359c2099f9c": {
+  "75c03a54c374ecb1": {
     "json_key": "BI / CI - eliberat de",
     "extracted_value": null,
     "reasoning": "fallback: Placeholder appears after 'eliberat de' in identity document details",
-    "confidence": 0.9,
+    "confidence": 1.0,
     "source": "llm_fallback",
     "para_index": 542,
     "start": 421,
     "end": 452
   },
-  "69e648589d23012e": {
+  "7dc597595f5454f2": {
     "json_key": "BI / CI - data",
     "extracted_value": null,
     "reasoning": "fallback: Placeholder appears after 'la data de' in identity document details",
-    "confidence": 0.9,
+    "confidence": 1.0,
     "source": "llm_fallback",
     "para_index": 542,
     "start": 465,
     "end": 469
   },
-  "91d3bb09a35bfadc": {
+  "79b56d9c18dc8c83": {
     "json_key": "Functia persoanei imputernicite",
     "extracted_value": null,
     "reasoning": "fallback: Placeholder appears after 'având funcţia de', indicating the function of the authorized person",
@@ -1855,17 +1839,17 @@
     "start": 488,
     "end": 506
   },
-  "af4bde84d7f4c951": {
-    "json_key": "Semnatura autorizata",
+  "e7ff6d5f094113b4": {
+    "json_key": "Imputernicit - nume",
     "extracted_value": null,
-    "reasoning": "fallback: Placeholder appears in context of signature specimen section",
+    "reasoning": "Context suggests authorized person signature specimen",
     "confidence": 0.8,
-    "source": "llm_fallback",
+    "source": "llm_page_ks",
     "para_index": 558,
     "start": 7,
     "end": 53
   },
-  "d257e2d636ba79c2": {
+  "a693d11848a821c2": {
     "json_key": "Anunt / Invitatie nr",
     "extracted_value": null,
     "reasoning": "fallback: Placeholder appears after 'anunţului/invitaţiei de participare nr.' indicating the announcement/invitation number",
@@ -1875,7 +1859,7 @@
     "start": 52,
     "end": 58
   },
-  "b682c726bd49715d": {
+  "026bb8528c6e9fba": {
     "json_key": "Anunt / Invitatie data",
     "extracted_value": null,
     "reasoning": "fallback: Placeholder appears after 'din' following the announcement number, indicating the date",
@@ -1885,70 +1869,70 @@
     "start": 63,
     "end": 77
   },
-  "64e6a905e040cc64": {
+  "ec2b521994b074e1": {
     "json_key": "Denumire procedura",
     "extracted_value": null,
-    "reasoning": "Placeholder is specifically for procedure name, matches 'Denumire procedura' key",
+    "reasoning": "Placeholder is for procedure name/type, matches 'Denumire procedura' key",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 581,
     "start": 111,
     "end": 131
   },
-  "40bf9b590733b604": {
+  "9ad07f6fc18ab32c": {
     "json_key": "Denumirea contractului de achizitie publica",
     "extracted_value": null,
-    "reasoning": "Context explicitly mentions 'contractului de achiziție publică' and placeholder is for contract name",
+    "reasoning": "Placeholder explicitly asks for contract name and matches exact key 'Denumirea contractului de achizitie publica'",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 581,
     "start": 183,
     "end": 224
   },
-  "a08c2d22fd58b38a": {
+  "858b294c1f6fb1bb": {
     "json_key": "Denumirea / numele operatorului economic",
     "extracted_value": null,
-    "reasoning": "Context shows '(denumirea/numele operatorului economic)' directly after placeholder",
+    "reasoning": "Placeholder is for economic operator name, matches exact key and context shows '(denumirea/numele operatorului economic)'",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 583,
     "start": 4,
     "end": 44
   },
-  "807536812ea6ae40": {
+  "1ac64fe749b7034a": {
     "json_key": "Document privind garantia pentru participare",
     "extracted_value": null,
-    "reasoning": "Context mentions 'privind garanția pentru participare' and asks for document type/series/number/issuer",
+    "reasoning": "Context shows 'Documentul ... privind garanţia pentru participare', matches the guarantee document key",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 585,
     "start": 14,
     "end": 36
   },
-  "2efdcb9065c9c62e": {
+  "0aafde05241bd9bb": {
     "json_key": "Data completarii",
     "extracted_value": null,
-    "reasoning": "Context shows 'Data completării' directly before placeholder",
+    "reasoning": "Context shows 'Data completării' which exactly matches the key 'Data completarii'",
     "confidence": 0.95,
     "source": "llm_page_ks",
     "para_index": 592,
     "start": 17,
     "end": 28
   },
-  "a2c034e5c4838a38": {
+  "034f8917b8b8c5ba": {
     "json_key": "Semnatura autorizata",
     "extracted_value": null,
-    "reasoning": "Context shows '(semnătura autorizată)' directly after placeholder",
+    "reasoning": "Placeholder is positioned after '(semnătura autorizată)' label, matches 'Semnatura autorizata' key",
     "confidence": 0.9,
     "source": "llm_page_ks",
     "para_index": 594,
     "start": 9,
     "end": 44
   },
-  "e21616822ff203e6": {
+  "554af042c45ca440": {
     "json_key": "Numar copii ale ofertei",
     "extracted_value": null,
-    "reasoning": "fallback: The placeholder appears in context 'în original şi într-un număr de [[PH:e2161682]] copii' which directly asks for the number of copies of the offer, matching the key 'Numar copii ale ofertei'",
+    "reasoning": "fallback: The placeholder appears in context 'în original şi într-un număr de [[PH:65c3fa0d]] copii' which directly asks for the number of copies of the offer, matching the key 'Numar copii ale ofertei'",
     "confidence": 0.95,
     "source": "llm_fallback",
     "para_index": 586,
