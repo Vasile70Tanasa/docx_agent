@@ -3,7 +3,7 @@
 Automatically fills multi-page DOCX forms from JSON data using an LLM-powered pipeline.
 Given a template DOCX with visual blanks (dots, underscores, empty spaces) and a JSON file with field values, the system identifies each placeholder, maps it to the correct JSON key, and produces a filled copy — preserving the original layout, fonts, and styles.
 
-📹 **[Watch the demo (3 min)](https://www.loom.com/share/c5be301b0ff844e08cab330936f67815)**
+📹 **[Watch the demo (~5 min)](https://www.loom.com/share/c5be301b0ff844e08cab330936f67815)**
 
 ## Architecture
 
